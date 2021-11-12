@@ -1,6 +1,9 @@
 
 import pandas as pd
 import requests
+
+import json
+
 from models import Equities, SESSION
 from config import Config
 COL_NAMES = {
@@ -55,4 +58,41 @@ def _get_listed_symbols() -> pd.DataFrame:
     res = requests.get(Config.base_url, params=_generate_query("LISTING_STATUS"))
     csv = str(res.content, encoding="utf-8")
     return pd.read_csv(csv, header=0)
+
+
+@bar_data_wrapper
+def _get_daily_equity_data(symbol: str) -> pd.DataFrame:
+    """Requests daily bar data for the provided symbol from alphavantage"""
+
+    params = _generate_query(
+        "TIME_SERIES_DAILY", symbol=symbol, outputsize=True, datatype=True
+    )
+
+    res = requests.get(Config.base_url, params=params)
+    return pd.read_json(json.dumps(res.json()["Time Series (Daily)"]), orient="index")
+
+
+@bar_data_wrapper
+def _get_weekly_equity_data(symbol: str) -> pd.DataFrame:
+    """Requests weekly bar data for the provided symbol from alphavantage"""
+
+    params = _generate_query(
+        "TIME_SERIES_WEEKLY", symbol=symbol, datatype=True
+    )
+
+    res = requests.get(Config.base_url, params=params)
+    return pd.read_json(json.dumps(res.json()["Weekly Time Series"]), orient="index")
+
+
+@bar_data_wrapper
+def _get_monthly_equity_data(symbol: str) -> pd.DataFrame:
+    """Requests weekly bar data for the provided symbol from alphavantage"""
+
+    params = _generate_query(
+        "TIME_SERIES_MONTHLY", symbol=symbol, datatype=True
+    )
+
+    res = requests.get(Config.base_url, params=params)
+    return pd.read_json(json.dumps(res.json()["Monthly Time Series"]), orient="index")
+
 
