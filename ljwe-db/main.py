@@ -21,6 +21,26 @@ def bar_data_wrapper(func):
     return wrapper
 
 
+def _generate_query(
+    function: str, symbol: str = None, outputsize: bool = False, datatype: bool = False
+) -> dict:
+    """Produces an appropriate parameter set for each endpoint"""
+
+    params = {
+        "function": function,
+        "apikey": Config.api_key,
+    }
+
+    if symbol:
+        params["symbol"] = symbol
+
+    if outputsize:
+        params["output_size"] = Config.output_size
+
+    if datatype:
+        params["data_type"] = Config.data_type
+
+    return params
 def _get_listed_symbols() -> pd.DataFrame:
     """Retrieves currently listed symbols from alphavantage"""
     res = requests.get(Config.base_url, params=_generate_query("LISTING_STATUS"))
