@@ -96,3 +96,10 @@ def _get_monthly_equity_data(symbol: str) -> pd.DataFrame:
     return pd.read_json(json.dumps(res.json()["Monthly Time Series"]), orient="index")
 
 
+def update_equities():
+    """Adds/updates database with data from alphavantage"""
+
+    for id, bar in _get_listed_symbols().iterrows():
+        print(id, bar)
+        # Add / update
+
