@@ -1,5 +1,9 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, Integer, String, DateTime, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+
+engine = create_engine("sqlite:///app.db")
+SESSION = sessionmaker(engine)
+
 
 Base = declarative_base()
 
