@@ -1,6 +1,7 @@
 
 import pandas as pd
 import requests
+from models import Equities, SESSION
 from config import Config
 COL_NAMES = {
     '1. open': 'open_price',
@@ -41,6 +42,14 @@ def _generate_query(
         params["data_type"] = Config.data_type
 
     return params
+
+
+def _get_database_symbols(): # type hint for return type
+    """Queries database for current symbols"""
+    with SESSION() as session:
+        return session.query(Equities).all()
+
+
 def _get_listed_symbols() -> pd.DataFrame:
     """Retrieves currently listed symbols from alphavantage"""
     res = requests.get(Config.base_url, params=_generate_query("LISTING_STATUS"))
