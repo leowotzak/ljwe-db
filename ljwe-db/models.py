@@ -1,4 +1,11 @@
-from sqlalchemy import Column, Integer, String, DateTime, create_engine
+"""models.py
+
+Database models utilized by DB scripts to query/add new entries
+
+
+
+"""
+from sqlalchemy import Column, DateTime, Integer, String, Float, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 engine = create_engine("sqlite:///app.db")
@@ -21,3 +28,18 @@ class Equities(Base):
     asset_type = Column(String)
     created_date = Column(DateTime, nullable=False)
     last_updated_date = Column(DateTime, nullable=False)
+
+class BarData(Base):
+    """Data model for 'Bar' i.e. an equity price snapshot"""
+
+    __tablename__ = "daily_bar_data"
+
+    equity_id = Column(Integer, primary_key=True)
+    timestamp = Column(DateTime, primary_key=True)
+    open_price = Column(Float, nullable=False)
+    high_price = Column(Float, nullable=False)
+    low_price = Column(Float, nullable=False)
+    close_price = Column(Float, nullable=False)
+    adj_close_price = Column(Float)
+    volume = Column(Integer, nullable=False)
+    dividend_amount = Column(Float)
