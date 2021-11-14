@@ -16,14 +16,16 @@ Output
 
 """
 
+import logging
 
 import pandas as pd
 import requests
 
 import json
 
-from models import Equities, SESSION
-from config import Config
+logging.basicConfig(filename='main.log', filemode='a', level=logging.DEBUG)
+log = logging.getLogger(__name__)
+log.addHandler(logging.StreamHandler())
 
 COL_NAMES = {
     "1. open": "open_price",
