@@ -7,14 +7,17 @@ SESSION = sessionmaker(engine)
 
 Base = declarative_base()
 
-class Equities(Base):
 
-    __tablename__ = 'equities'
+class Equities(Base):
+    """Equity model used for stocks and ETFs"""
+
+    __tablename__ = "equities"
+
     equity_id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
-    ticker = Column(String)
+    name = Column(String, nullable=False)
+    ticker = Column(String, nullable=False)
     description = Column(String)
     sector = Column(String)
     asset_type = Column(String)
-    created_date = Column(DateTime)
-    last_updated_date = Column(DateTime)
+    created_date = Column(DateTime, nullable=False)
+    last_updated_date = Column(DateTime, nullable=False)
