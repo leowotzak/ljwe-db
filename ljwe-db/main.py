@@ -2,7 +2,7 @@
 
 A collection of scripts and utilities that facilitate the creating, updating, and appending
 the master securities database. The scripts use pandas to format the data properly and requests
-to parse http requests/responses
+to parse http requests/responses.
 
 Input
 
@@ -15,14 +15,18 @@ Output
 
 
 """
+# TODO: create functionality for intraday
 
+import json
 import logging
+from datetime import datetime
 from io import StringIO
 
 import pandas as pd
 import requests
+from config import Config
 
-import json
+from models import SESSION, Equities, BarData
 
 logging.basicConfig(filename='main.log', filemode='a', level=logging.DEBUG)
 log = logging.getLogger(__name__)
@@ -117,7 +121,22 @@ def _get_monthly_equity_data(symbol: str) -> pd.DataFrame:
 
 
 def update_equities():
-    """Adds/updates database with data from alphavantage"""
+    """Adds/updates symbols table with data from alphavantage"""
+    with SESSION() as session:
+        for equity_id, bar_data in _get_listed_symbols().iterrows():
+            ts = datetime.utcnow()
+            bar = Equities(
+                equity_id=equity_id,
+                name=bar_data["name"],
+                ticker=bar_data["symbol"],
+                asset_type=bar_data["assetType"],
+                created_date=ts,
+                last_updated_date=ts,
+            )
+            log.debug("Adding symbol %s to database", bar)
+            session.merge(bar)
+        log.debug("Committing session...")
+        session.commit()
 
     for id, bar in _get_listed_symbols().iterrows():
         print(id, bar)
