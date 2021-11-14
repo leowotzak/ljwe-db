@@ -29,6 +29,10 @@ class Equities(Base):
     created_date = Column(DateTime, nullable=False)
     last_updated_date = Column(DateTime, nullable=False)
 
+    def __repr__(self):
+        return f"<Equity id={self.equity_id} name={self.name} ticker={self.ticker}>"
+
+
 class BarData(Base):
     """Data model for 'Bar' i.e. an equity price snapshot"""
 
@@ -43,3 +47,6 @@ class BarData(Base):
     adj_close_price = Column(Float)
     volume = Column(Integer, nullable=False)
     dividend_amount = Column(Float)
+
+    def __repr__(self):
+        return f"<BarData id={self.equity_id} ts={self.timestamp}>"
