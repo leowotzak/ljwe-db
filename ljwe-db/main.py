@@ -13,6 +13,7 @@ Output
     None
 
 
+
 """
 
 
@@ -47,6 +48,8 @@ def _generate_query(
     function: str, symbol: str = None, outputsize: bool = False, datatype: bool = False
 ) -> dict:
     """Produces an appropriate parameter set for each endpoint"""
+
+    function = function + '_ADJUSTED' if Config.adjusted else function
 
     params = {
         "function": function,
