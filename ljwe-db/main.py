@@ -138,6 +138,16 @@ def update_equities():
         log.debug("Committing session...")
         session.commit()
 
-    for id, bar in _get_listed_symbols().iterrows():
-        print(id, bar)
-        # Add / update
+
+def update_prices():
+    """Adds/updates price data for each symbol in symbols table"""
+    with SESSION() as session:
+        for equity_id, bar_data in _get_listed_symbols().iterrows():
+            for get_func in (_get_daily_equity_data, _get_weekly_equity_data, _get_monthly_equity_data):
+                price_data = get_func(bar_data['symbol'])
+                for ts, b in price_data.iterrows():
+                    bar = BarData(equity_id=equity_id, timestamp=ts, **b)
+                    session.merge(bar)
+                log.debug("Committing for %s", bar_data['symbol'])
+                session.commit()
+
