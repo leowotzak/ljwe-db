@@ -17,6 +17,7 @@ Output
 """
 
 import logging
+from io import StringIO
 
 import pandas as pd
 import requests
@@ -80,7 +81,7 @@ def _get_listed_symbols() -> pd.DataFrame:
     """Retrieves currently listed symbols from alphavantage"""
     res = requests.get(Config.base_url, params=_generate_query("LISTING_STATUS"))
     csv = str(res.content, encoding="utf-8")
-    return pd.read_csv(csv, header=0)
+    return pd.read_csv(StringIO(csv), header=0)
 
 
 @bar_data_wrapper
