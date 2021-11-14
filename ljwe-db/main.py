@@ -70,7 +70,7 @@ def _generate_query(
     return params
 
 
-def _get_database_symbols():  # type hint for return type
+def _get_database_symbols() -> list:
     """Queries database for current symbols"""
     with SESSION() as session:
         return session.query(Equities).all()
