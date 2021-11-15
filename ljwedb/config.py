@@ -10,4 +10,5 @@ class Config:
     data_type = 'json' # or csv
     adjusted = False
     base_url = "https://www.alphavantage.co/query"
+    database_url = os.environ.get('DATABASE_URL')
 

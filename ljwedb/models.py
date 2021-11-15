@@ -1,14 +1,9 @@
-"""models.py
-
-Database models utilized by DB scripts to query/add new entries
-
-
-
-"""
 from sqlalchemy import Column, DateTime, Integer, String, Float, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-engine = create_engine("sqlite:///app.db")
+from config import Config
+
+engine = create_engine(Config.database_url)
 SESSION = sessionmaker(engine)
 
 
@@ -36,7 +31,7 @@ class Equities(Base):
 class BarData(Base):
     """Data model for 'Bar' i.e. an equity price snapshot"""
 
-    __tablename__ = "daily_bar_data"
+    __tablename__ = "bar_data"
 
     equity_id = Column(Integer, primary_key=True)
     timestamp = Column(DateTime, primary_key=True)
@@ -50,3 +45,8 @@ class BarData(Base):
 
     def __repr__(self):
         return f"<BarData id={self.equity_id} ts={self.timestamp}>"
+
+
+class DailyBarData(BarData):
+    """Collection of 'Bar's with daily frequency"""
+    __tablename__ = "bar_data_daily"

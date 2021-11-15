@@ -6,7 +6,7 @@ to parse http requests/responses.
 
 Input
 
-    Configuration
+    None
 
 Output
 
@@ -151,3 +151,6 @@ def update_prices():
                 log.debug("Committing for %s", bar_data['symbol'])
                 session.commit()
 
+
+if __name__ == "__main__":
+    update_prices()
