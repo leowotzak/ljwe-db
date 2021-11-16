@@ -39,6 +39,8 @@ COL_NAMES = {
     "5. volume": "volume",
 }
 
+INTERVALS = ["1min", "5min", "15min", "30min", "60min"]
+
 SLICES = [
     "year1month1",
     "year1month2",
@@ -97,11 +99,19 @@ def _generate_query(
     if symbol:
         params["symbol"] = symbol
 
+    if interval:
+        params["interval"] = interval
+
+    if slice_:
+        params["slice"] = slice_
+
     if outputsize:
         params["output_size"] = Config.output_size
 
     if datatype:
         params["data_type"] = Config.data_type
+
+    log.debug(params)
 
     return params
 
@@ -149,6 +159,54 @@ def _get_monthly_equity_data(symbol: str) -> pd.DataFrame:
 
     res = requests.get(Config.base_url, params=params)
     return pd.read_json(json.dumps(res.json()["Monthly Time Series"]), orient="index")
+
+
+@bar_data_wrapper
+def _get_intraday_equity_data_interval(symbol: str, interval: str) -> pd.DataFrame:
+    """Requests intraday (or extended intraday) bar info for provided symbol at given interval"""
+
+    params = _generate_query(
+        "TIME_SERIES_INTRADAY",
+        symbol=symbol,
+        interval=interval,
+        outputsize=True,
+        datatype=True,
+    )
+
+    res = requests.get(Config.base_url, params=params)
+    return pd.read_json(json.dumps(res.json()[f"Time Series ({interval})"])).transpose()
+
+
+@bar_data_wrapper
+def _get_intraday_equity_data_interval_extended(
+    symbol: str, interval: str, slice_: str
+) -> pd.DataFrame:
+    """Requests intraday (extended) bar info for provided symbol at given interval for each slice"""
+
+    params = _generate_query(
+        "TIME_SERIES_INTRADAY_EXTENDED", symbol=symbol, interval=interval, slice=slice_
+    )
+    res = requests.get(Config.base_url, params=params)
+    return pd.read_json(json.dumps(res.json()[""]))
+
+
+def _get_intraday_equity_data(symbol: str):
+    """Wrapper function that gets intraday data at all intervals"""
+    for interval in INTERVALS:
+        log.debug("Using interval: %s", interval)
+        print(_get_intraday_equity_data_interval(symbol, interval).head(10))
+
+
+def _get_intraday_equity_data_extended(symbol: str):
+    """Wrapper function that gets intraday data history at all slices"""
+    return
+
+
+def _insert_bars_to_table(*dfs):
+    """Takes a bar data DataFrame and inserts the bars into the proper table"""
+    for df in dfs:
+        for equity_id, bar_data in df.iterrows():
+            print(1)
 
 
 def update_equities():
