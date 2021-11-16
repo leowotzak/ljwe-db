@@ -15,10 +15,10 @@ Output
 
 
 """
-# TODO: create functionality for intraday
 
 import json
 import logging
+import time
 from datetime import datetime
 from io import StringIO
 
@@ -151,6 +151,7 @@ def update_prices():
                     session.merge(bar)
                 log.debug("Committing for %s", bar_data['symbol'])
                 session.commit()
+                time.sleep(15)
 
 
 if __name__ == "__main__":
