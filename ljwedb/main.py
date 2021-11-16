@@ -25,6 +25,7 @@ from io import StringIO
 import pandas as pd
 import requests
 from config import Config
+from models import SESSION, BarDataDaily, Equities
 
 from models import SESSION, Equities, BarData
 

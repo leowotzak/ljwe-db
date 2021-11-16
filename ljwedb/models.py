@@ -1,7 +1,6 @@
-from sqlalchemy import Column, DateTime, Integer, String, Float, create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
-
 from config import Config
+from sqlalchemy import Column, DateTime, Float, Integer, String, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 engine = create_engine(Config.database_url)
 SESSION = sessionmaker(engine)
@@ -28,13 +27,12 @@ class Equities(Base):
         return f"<Equity id={self.equity_id} name={self.name} ticker={self.ticker}>"
 
 
-class BarData(Base):
-    """Data model for 'Bar' i.e. an equity price snapshot"""
+class BarDataDaily(Base):
 
-    __tablename__ = "bar_data"
+    __tablename__ = "bar_data_daily"
 
-    equity_id = Column(Integer, primary_key=True)
     timestamp = Column(DateTime, primary_key=True)
+    equity_id = Column(Integer, primary_key=True)
     open_price = Column(Float, nullable=False)
     high_price = Column(Float, nullable=False)
     low_price = Column(Float, nullable=False)
@@ -44,9 +42,4 @@ class BarData(Base):
     dividend_amount = Column(Float)
 
     def __repr__(self):
-        return f"<BarData id={self.equity_id} ts={self.timestamp}>"
-
-
-class DailyBarData(BarData):
-    """Collection of 'Bar's with daily frequency"""
-    __tablename__ = "bar_data_daily"
+        return f"<BarDataDaily id={self.equity_id} ts={self.timestamp}>"
