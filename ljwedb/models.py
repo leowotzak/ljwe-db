@@ -42,4 +42,40 @@ class BarDataDaily(Base):
     dividend_amount = Column(Float)
 
     def __repr__(self):
-        return f"<BarDataDaily id={self.equity_id} ts={self.timestamp}>"
+        return f"<BarDataDaily id={self.symbol_id} ts={self.timestamp}>"
+
+
+class BarDataWeekly(Base):
+
+    __tablename__ = "bar_data_weekly"
+
+    timestamp = Column(DateTime, primary_key=True)
+    symbol_id = Column(Integer, primary_key=True)
+    open_price = Column(Float, nullable=False)
+    high_price = Column(Float, nullable=False)
+    low_price = Column(Float, nullable=False)
+    close_price = Column(Float, nullable=False)
+    adj_close_price = Column(Float)
+    volume = Column(Integer, nullable=False)
+    dividend_amount = Column(Float)
+
+    def __repr__(self):
+        return f"<BarDataWeekly id={self.symbol_id} ts={self.timestamp}>"
+
+
+class BarDataMonthly(Base):
+
+    __tablename__ = "bar_data_monthly"
+
+    timestamp = Column(DateTime, primary_key=True)
+    symbol_id = Column(Integer, primary_key=True)
+    open_price = Column(Float, nullable=False)
+    high_price = Column(Float, nullable=False)
+    low_price = Column(Float, nullable=False)
+    close_price = Column(Float, nullable=False)
+    adj_close_price = Column(Float)
+    volume = Column(Integer, nullable=False)
+    dividend_amount = Column(Float)
+
+    def __repr__(self):
+        return f"<BarDataMonthly id={self.symbol_id} ts={self.timestamp}>"

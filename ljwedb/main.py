@@ -25,7 +25,7 @@ from io import StringIO
 import pandas as pd
 import requests
 from config import Config
-from models import SESSION, BarDataDaily, Equities
+from models import SESSION, BarDataDaily, BarDataMonthly, BarDataWeekly, Symbols
 
 logging.basicConfig(filename="main.log", filemode="a", level=logging.DEBUG)
 log = logging.getLogger(__name__)
@@ -221,13 +221,17 @@ def update_prices():
     """Adds/updates price data for each symbol in symbols table"""
     with SESSION() as session:
         for symbol_id, bar_data in _get_database_symbols(["A", "AAA"]):
+            for get_func, model in (
+                (_get_daily_equity_data, BarDataDaily),
+                (_get_weekly_equity_data, BarDataWeekly),
+                (_get_monthly_equity_data, BarDataMonthly),
             ):
-                price_data = get_func(bar_data["symbol"])
+                price_data = get_func(bar_data["ticker"])
                 for ts, b in price_data.iterrows():
-                    bar = BarDataDaily(equity_id=equity_id, timestamp=ts, **b)
-                    log.debug(bar)
+                    bar = model(symbol_id=symbol_id, timestamp=ts, **b)
+                    log.debug("Creating bar for %s @ %s", bar.symbol_id, bar.timestamp)
                     session.merge(bar)
-                log.debug("Committing for %s", bar_data["symbol"])
+                log.debug("Committing %s price data for %s", model, bar_data["ticker"])
                 session.commit()
                 time.sleep(15)
 
