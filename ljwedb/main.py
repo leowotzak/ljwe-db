@@ -205,25 +205,14 @@ def _get_intraday_equity_data_extended(symbol: str):
 def _insert_bars_to_table(*dfs):
     """Takes a bar data DataFrame and inserts the bars into the proper table"""
     for df in dfs:
-        for equity_id, bar_data in df.iterrows():
+        for symbol_id, bar_data in df.iterrows():
             print(1)
 
 
 def update_equities():
     """Adds/updates symbols table with data from alphavantage"""
     with SESSION() as session:
-        for equity_id, bar_data in _get_listed_symbols().iterrows():
-            ts = datetime.utcnow()
-            bar = Equities(
-                equity_id=equity_id,
-                name=bar_data["name"],
-                ticker=bar_data["symbol"],
-                asset_type=bar_data["assetType"],
-                created_date=ts,
-                last_updated_date=ts,
-            )
-            log.debug("Adding symbol %s to database", bar)
-            session.merge(bar)
+        for symbol_id, bar_data in _get_listed_symbols().iterrows():  #! placeholder
         log.debug("Committing session...")
         session.commit()
 
@@ -231,11 +220,7 @@ def update_equities():
 def update_prices():
     """Adds/updates price data for each symbol in symbols table"""
     with SESSION() as session:
-        for equity_id, bar_data in _get_listed_symbols().iterrows():
-            for get_func in (
-                _get_daily_equity_data,
-                _get_weekly_equity_data,
-                _get_monthly_equity_data,
+        for symbol_id, bar_data in _get_database_symbols(["A", "AAA"]):
             ):
                 price_data = get_func(bar_data["symbol"])
                 for ts, b in price_data.iterrows():

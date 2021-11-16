@@ -9,12 +9,12 @@ SESSION = sessionmaker(engine)
 Base = declarative_base()
 
 
-class Equities(Base):
-    """Equity model used for stocks and ETFs"""
+class Symbols(Base):
+    """Model used for different securities i.e. stocks, bonds, ETFs etc..."""
 
-    __tablename__ = "equities"
+    __tablename__ = "symbols"
 
-    equity_id = Column(Integer, primary_key=True, autoincrement=True)
+    symbol_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
     ticker = Column(String, nullable=False)
     description = Column(String)
@@ -24,7 +24,7 @@ class Equities(Base):
     last_updated_date = Column(DateTime, nullable=False)
 
     def __repr__(self):
-        return f"<Equity id={self.equity_id} name={self.name} ticker={self.ticker}>"
+        return f"<Equity id={self.symbol_id} name={self.name} ticker={self.ticker}>"
 
 
 class BarDataDaily(Base):
@@ -32,7 +32,7 @@ class BarDataDaily(Base):
     __tablename__ = "bar_data_daily"
 
     timestamp = Column(DateTime, primary_key=True)
-    equity_id = Column(Integer, primary_key=True)
+    symbol_id = Column(Integer, primary_key=True)
     open_price = Column(Float, nullable=False)
     high_price = Column(Float, nullable=False)
     low_price = Column(Float, nullable=False)
