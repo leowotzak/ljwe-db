@@ -25,7 +25,9 @@ from io import StringIO
 import pandas as pd
 import requests
 from config import Config
-from models import SESSION, BarDataDaily, BarDataMonthly, BarDataWeekly, Symbols
+from models import (SESSION, BarDataDaily, BarDataFifteenMin, BarDataFiveMin,
+                    BarDataMonthly, BarDataOneHour, BarDataOneMin,
+                    BarDataThirtyMin, BarDataWeekly, Symbols)
 
 logging.basicConfig(filename="main.log", filemode="a", level=logging.DEBUG)
 log = logging.getLogger(__name__)
@@ -39,7 +41,13 @@ COL_NAMES = {
     "5. volume": "volume",
 }
 
-INTERVALS = ["1min", "5min", "15min", "30min", "60min"]
+INTRADAY_MODELS = {
+    "1min": BarDataOneMin,
+    "5min": BarDataFiveMin,
+    "15min": BarDataFifteenMin,
+    "30min": BarDataThirtyMin,
+    "60min": BarDataOneHour,
+}
 
 SLICES = [
     "year1month1",
@@ -209,30 +217,29 @@ def _insert_bars_to_table(*dfs):
             print(1)
 
 
-def update_equities():
-    """Adds/updates symbols table with data from alphavantage"""
+def update_intraday_prices(symbol: str, symbol_id: int):
     with SESSION() as session:
-        for symbol_id, bar_data in _get_listed_symbols().iterrows():  #! placeholder
-        log.debug("Committing session...")
-        session.commit()
+        for interval, model in INTRADAY_MODELS.items():
+            for ts, b in _get_intraday_equity_data_interval(symbol, interval).iterrows():
+                m = model(symbol_id=symbol_id, timestamp=ts, **b)
+                session.merge(m)
+            else:
+                log.debug("Committing new intraday (%s) price data for %s", interval, symbol)
+                session.commit()   
 
 
-def update_prices():
-    """Adds/updates price data for each symbol in symbols table"""
+def update_intraday_extended_history_prices(symbol, symbol_id):
     with SESSION() as session:
-        for symbol_id, bar_data in _get_database_symbols(["A", "AAA"]):
-            for get_func, model in (
-                (_get_daily_equity_data, BarDataDaily),
-                (_get_weekly_equity_data, BarDataWeekly),
-                (_get_monthly_equity_data, BarDataMonthly),
-            ):
-                price_data = get_func(bar_data["ticker"])
-                for ts, b in price_data.iterrows():
-                    bar = model(symbol_id=symbol_id, timestamp=ts, **b)
-                    log.debug("Creating bar for %s @ %s", bar.symbol_id, bar.timestamp)
-                    session.merge(bar)
-                log.debug("Committing %s price data for %s", model, bar_data["ticker"])
-                session.commit()
+        for slice_ in SLICES:
+            for interval, model in INTRADAY_MODELS.items():
+                for ts, b in _get_intraday_equity_data_interval_extended(symbol, interval, slice_):
+                    m = model(symbol_id=symbol_id, timestamp=ts, **b)
+                    session.merge(m)
+                else:
+                    log.debug("Committing new intraday extended (%s) price data for %s", interval, symbol)
+                    session.commit()
+
+
                 time.sleep(15)
 
 

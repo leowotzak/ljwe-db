@@ -79,3 +79,93 @@ class BarDataMonthly(Base):
 
     def __repr__(self):
         return f"<BarDataMonthly id={self.symbol_id} ts={self.timestamp}>"
+
+
+class BarDataOneMin(Base):
+
+    __tablename__ = "bar_data_1min"
+
+    timestamp = Column(DateTime, primary_key=True)
+    symbol_id = Column(Integer, primary_key=True)
+    open_price = Column(Float, nullable=False)
+    high_price = Column(Float, nullable=False)
+    low_price = Column(Float, nullable=False)
+    close_price = Column(Float, nullable=False)
+    adj_close_price = Column(Float)
+    volume = Column(Integer, nullable=False)
+    dividend_amount = Column(Float)
+
+    def __repr__(self):
+        return f"<BarDataOneMin id={self.symbol_id} ts={self.timestamp}>"
+
+
+class BarDataFiveMin(Base):
+
+    __tablename__ = "bar_data_5min"
+
+    timestamp = Column(DateTime, primary_key=True)
+    symbol_id = Column(Integer, primary_key=True)
+    open_price = Column(Float, nullable=False)
+    high_price = Column(Float, nullable=False)
+    low_price = Column(Float, nullable=False)
+    close_price = Column(Float, nullable=False)
+    adj_close_price = Column(Float)
+    volume = Column(Integer, nullable=False)
+    dividend_amount = Column(Float)
+
+    def __repr__(self):
+        return f"<BarDataFiveMin id={self.symbol_id} ts={self.timestamp}>"
+
+
+class BarDataFifteenMin(Base):
+
+    __tablename__ = "bar_data_15min"
+
+    timestamp = Column(DateTime, primary_key=True)
+    symbol_id = Column(Integer, primary_key=True)
+    open_price = Column(Float, nullable=False)
+    high_price = Column(Float, nullable=False)
+    low_price = Column(Float, nullable=False)
+    close_price = Column(Float, nullable=False)
+    adj_close_price = Column(Float)
+    volume = Column(Integer, nullable=False)
+    dividend_amount = Column(Float)
+
+    def __repr__(self):
+        return f"<BarDataFifteenMin id={self.symbol_id} ts={self.timestamp}>"
+
+
+class BarDataThirtyMin(Base):
+
+    __tablename__ = "bar_data_30min"
+
+    timestamp = Column(DateTime, primary_key=True)
+    symbol_id = Column(Integer, primary_key=True)
+    open_price = Column(Float, nullable=False)
+    high_price = Column(Float, nullable=False)
+    low_price = Column(Float, nullable=False)
+    close_price = Column(Float, nullable=False)
+    adj_close_price = Column(Float)
+    volume = Column(Integer, nullable=False)
+    dividend_amount = Column(Float)
+
+    def __repr__(self):
+        return f"<BarDataThirtyMin id={self.symbol_id} ts={self.timestamp}>"
+
+
+class BarDataOneHour(Base):
+
+    __tablename__ = "bar_data_1h"
+
+    timestamp = Column(DateTime, primary_key=True)
+    symbol_id = Column(Integer, primary_key=True)
+    open_price = Column(Float, nullable=False)
+    high_price = Column(Float, nullable=False)
+    low_price = Column(Float, nullable=False)
+    close_price = Column(Float, nullable=False)
+    adj_close_price = Column(Float)
+    volume = Column(Integer, nullable=False)
+    dividend_amount = Column(Float)
+
+    def __repr__(self):
+        return f"<BarDataOneHour id={self.symbol_id} ts={self.timestamp}>"
