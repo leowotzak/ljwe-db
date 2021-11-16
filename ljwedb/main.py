@@ -1,8 +1,8 @@
 """LJWE DB.
 
-A collection of scripts and utilities that facilitate the creating, updating, and appending
-the master securities database. The scripts use pandas to format the data properly and requests
-to parse http requests/responses.
+A collection of functions that facilitate the creating, updating, and appending the 
+master securities database. The scripts use pandas to format the data properly and 
+requests to parse http requests/responses.
 
 Input
 
@@ -27,9 +27,7 @@ import requests
 from config import Config
 from models import SESSION, BarDataDaily, Equities
 
-from models import SESSION, Equities, BarData
-
-logging.basicConfig(filename='main.log', filemode='a', level=logging.DEBUG)
+logging.basicConfig(filename="main.log", filemode="a", level=logging.DEBUG)
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
@@ -40,6 +38,33 @@ COL_NAMES = {
     "4. close": "close_price",
     "5. volume": "volume",
 }
+
+SLICES = [
+    "year1month1",
+    "year1month2",
+    "year1month3",
+    "year1month4",
+    "year1month5",
+    "year1month6",
+    "year1month7",
+    "year1month8",
+    "year1month9",
+    "year1month10",
+    "year1month11",
+    "year1month12",
+    "year2month1",
+    "year2month2",
+    "year2month3",
+    "year2month4",
+    "year2month5",
+    "year2month6",
+    "year2month7",
+    "year2month8",
+    "year2month9",
+    "year2month10",
+    "year2month11",
+    "year2month12",
+]
 
 
 def bar_data_wrapper(func):
@@ -53,11 +78,16 @@ def bar_data_wrapper(func):
 
 
 def _generate_query(
-    function: str, symbol: str = None, outputsize: bool = False, datatype: bool = False
+    function: str,
+    symbol: str = None,
+    interval: str = None,
+    slice_: str = None,
+    outputsize: bool = False,
+    datatype: bool = False,
 ) -> dict:
     """Produces an appropriate parameter set for each endpoint"""
 
-    function = function + '_ADJUSTED' if Config.adjusted else function
+    function = function + "_ADJUSTED" if Config.adjusted else function
 
     params = {
         "function": function,
@@ -103,7 +133,7 @@ def _get_daily_equity_data(symbol: str) -> pd.DataFrame:
 
 @bar_data_wrapper
 def _get_weekly_equity_data(symbol: str) -> pd.DataFrame:
-    """Requests weekly bar data for the provided symbol from alphavantage"""
+    """Requests weekly bar data for the provided symbol"""
 
     params = _generate_query("TIME_SERIES_WEEKLY", symbol=symbol, datatype=True)
 
@@ -113,7 +143,7 @@ def _get_weekly_equity_data(symbol: str) -> pd.DataFrame:
 
 @bar_data_wrapper
 def _get_monthly_equity_data(symbol: str) -> pd.DataFrame:
-    """Requests weekly bar data for the provided symbol from alphavantage"""
+    """Requests monthly bar data for the provided symbol"""
 
     params = _generate_query("TIME_SERIES_MONTHLY", symbol=symbol, datatype=True)
 
@@ -144,12 +174,17 @@ def update_prices():
     """Adds/updates price data for each symbol in symbols table"""
     with SESSION() as session:
         for equity_id, bar_data in _get_listed_symbols().iterrows():
-            for get_func in (_get_daily_equity_data, _get_weekly_equity_data, _get_monthly_equity_data):
-                price_data = get_func(bar_data['symbol'])
+            for get_func in (
+                _get_daily_equity_data,
+                _get_weekly_equity_data,
+                _get_monthly_equity_data,
+            ):
+                price_data = get_func(bar_data["symbol"])
                 for ts, b in price_data.iterrows():
-                    bar = BarData(equity_id=equity_id, timestamp=ts, **b)
+                    bar = BarDataDaily(equity_id=equity_id, timestamp=ts, **b)
+                    log.debug(bar)
                     session.merge(bar)
-                log.debug("Committing for %s", bar_data['symbol'])
+                log.debug("Committing for %s", bar_data["symbol"])
                 session.commit()
                 time.sleep(15)
 
