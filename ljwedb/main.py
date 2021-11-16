@@ -114,20 +114,22 @@ def _generate_query(
         params["slice"] = slice_
 
     if outputsize:
-        params["output_size"] = Config.output_size
+        params["outputsize"] = Config.output_size
 
     if datatype:
-        params["data_type"] = Config.data_type
+        params["datatype"] = Config.data_type
 
     log.debug(params)
 
     return params
 
 
-def _get_database_symbols() -> list:
+def _get_database_symbols(syms: list) -> list:
     """Queries database for current symbols"""
     with SESSION() as session:
-        return session.query(Equities).all()
+        for sym in syms:
+            bar = session.query(Symbols).filter(Symbols.ticker == sym).first()
+            yield bar.symbol_id, bar.__dict__
 
 
 def _get_listed_symbols() -> pd.DataFrame:
@@ -198,23 +200,54 @@ def _get_intraday_equity_data_interval_extended(
     return pd.read_json(json.dumps(res.json()[""]))
 
 
-def _get_intraday_equity_data(symbol: str):
-    """Wrapper function that gets intraday data at all intervals"""
-    for interval in INTERVALS:
-        log.debug("Using interval: %s", interval)
-        print(_get_intraday_equity_data_interval(symbol, interval).head(10))
+def update_equities():
+    """Adds/updates symbols table with data from alphavantage"""
+    with SESSION() as session:
+        for symbol_id, bar_data in _get_listed_symbols().iterrows():
+            ts = datetime.utcnow()  # ! There are entries without 'name' fields
+            bar = Symbols(
+                symbol_id=symbol_id,
+                name=bar_data["name"],
+                ticker=bar_data["symbol"],
+                asset_type=bar_data["assetType"],
+                created_date=ts,
+                last_updated_date=ts,
+            )
+            log.debug("Adding symbol %s to database", bar)
+            session.merge(bar)
+            session.commit()
+        log.debug("Committing session...")
+        session.commit()
 
 
-def _get_intraday_equity_data_extended(symbol: str):
-    """Wrapper function that gets intraday data history at all slices"""
-    return
+def update_daily_prices(symbol: str, symbol_id: int):
+    with SESSION() as session:
+        for ts, b in _get_daily_equity_data(symbol).iterrows():
+            m = BarDataDaily(symbol_id=symbol_id, timestamp=ts, **b)
+            session.merge(m)
+        else:
+            log.debug("Committing new daily price data for %s", symbol)
+            session.commit()
 
 
-def _insert_bars_to_table(*dfs):
-    """Takes a bar data DataFrame and inserts the bars into the proper table"""
-    for df in dfs:
-        for symbol_id, bar_data in df.iterrows():
-            print(1)
+def update_weekly_prices(symbol: str, symbol_id: int):
+    with SESSION() as session:
+        for ts, b in _get_weekly_equity_data(symbol).iterrows():
+            m = BarDataWeekly(symbol_id=symbol_id, timestamp=ts, **b)
+            session.merge(m)
+        else:
+            log.debug("Committing new weekly price data for %s", symbol)
+            session.commit()
+
+
+def update_monthly_prices(symbol: str, symbol_id: int):
+    with SESSION() as session:
+        for ts, b in _get_monthly_equity_data(symbol).iterrows():
+            m = BarDataMonthly(symbol_id=symbol_id, timestamp=ts, **b)
+            session.merge(m)
+        else:
+            log.debug("Committing new monthly price data for %s", symbol)
+            session.commit()
 
 
 def update_intraday_prices(symbol: str, symbol_id: int):
@@ -240,8 +273,11 @@ def update_intraday_extended_history_prices(symbol, symbol_id):
                     session.commit()
 
 
-                time.sleep(15)
+def update_all_prices(*symbols):
+    """Adds/updates price data for each symbol in symbols table"""
+    for symbol_id, bar_data in _get_database_symbols(symbols):
+        pass
 
 
 if __name__ == "__main__":
-    update_prices()
+    update_intraday_prices('A', 0)
