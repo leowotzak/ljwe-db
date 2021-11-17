@@ -3,6 +3,7 @@ certifi==2021.10.8
 charset-normalizer==2.0.7
 greenlet==1.1.2
 idna==3.3
+lxml==4.6.4
 Mako==1.1.5
 MarkupSafe==2.0.1
 numpy==1.21.4

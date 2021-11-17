@@ -21,6 +21,7 @@ import logging
 import time
 from datetime import datetime
 from io import StringIO
+from typing import Generator
 
 import pandas as pd
 import requests
@@ -138,12 +139,16 @@ def _generate_query(
     return params
 
 
-def _get_database_symbols(syms: list) -> list:
+def _get_database_symbols(syms: list) -> Generator:
     """Queries database for current symbols"""
     with SESSION() as session:
-        for sym in syms:
-            bar = session.query(Symbols).filter(Symbols.ticker == sym).first()
-            yield bar.symbol_id, bar.__dict__
+        if syms:
+            query = session.query(Symbols).filter(Symbols.ticker in syms)
+        else:
+            query = session.query(Symbols).all()
+
+    for bar in query:
+        yield bar.symbol_id, bar.__dict__
 
 
 def _get_listed_symbols() -> pd.DataFrame:
@@ -151,6 +156,27 @@ def _get_listed_symbols() -> pd.DataFrame:
     res = requests.get(Config.base_url, params=_generate_query("LISTING_STATUS"))
     csv = str(res.content, encoding="utf-8")
     return pd.read_csv(StringIO(csv), header=0)
+
+
+def _get_wiki_sp500() -> pd.DataFrame:
+    """Queries S&P 500 companies for simplicity & size constraints from DB"""
+    with SESSION() as session:
+        members = pd.read_html(
+            "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+        )[0]
+        for idx, bar in members.iterrows():
+            m = Symbols(
+                name=bar["Security"],
+                ticker=bar["Symbol"],
+                sector=bar["GICS Sector"],
+                asset_type="stock",
+                created_date=datetime.utcnow(),
+                last_updated_date=datetime.utcnow(),
+            )
+            log.debug("Adding ticker: %s to 'Symbols' table", bar["Symbol"])
+            session.merge(m)
+        else:
+            session.commit()
 
 
 @bar_data_wrapper
@@ -282,34 +308,53 @@ def update_monthly_prices(symbol: str, symbol_id: int):
 def update_intraday_prices(symbol: str, symbol_id: int):
     with SESSION() as session:
         for interval, model in INTRADAY_MODELS.items():
-            for ts, b in _get_intraday_equity_data_interval(symbol, interval).iterrows():
+            for ts, b in _get_intraday_equity_data_interval(
+                symbol, interval
+            ).iterrows():
                 m = model(symbol_id=symbol_id, timestamp=ts, **b)
                 session.merge(m)
             else:
-                log.debug("Committing new intraday (%s) price data for %s", interval, symbol)
-                session.commit()   
+                log.debug(
+                    "Committing new intraday (%s) price data for %s", interval, symbol
+                )
+                session.commit()
 
 
 def update_intraday_extended_history_prices(symbol, symbol_id):
     with SESSION() as session:
         for slice_ in SLICES:
             for interval, model in INTRADAY_MODELS.items():
-                for ts, b in _get_intraday_equity_data_interval_extended(symbol, interval, slice_):
+                for ts, b in _get_intraday_equity_data_interval_extended(
+                    symbol, interval, slice_
+                ).iterrows():
                     m = model(symbol_id=symbol_id, timestamp=ts, **b)
                     session.merge(m)
                 else:
-                    log.debug("Committing new intraday extended (%s) price data for %s", interval, symbol)
+                    log.debug(
+                        "Committing new intraday extended (%s) price data for %s",
+                        interval,
+                        symbol,
+                    )
                     session.commit()
                 time.sleep(PER_REQUEST_WAIT)
 
 
-def update_all_prices(*symbols):
+def update_all_prices(symbols=None):
     """Adds/updates price data for each symbol in symbols table"""
+    # ? how to run without any input and do nothing
+    if not symbols:
+        symbols = []
+
     for symbol_id, bar_data in _get_database_symbols(symbols):
+        t = bar_data["ticker"]
+        update_daily_prices(t, symbol_id)
         time.sleep(PER_REQUEST_WAIT)
+        update_weekly_prices(t, symbol_id)
         time.sleep(PER_REQUEST_WAIT)
+        update_monthly_prices(t, symbol_id)
         time.sleep(PER_REQUEST_WAIT)
+        update_intraday_extended_history_prices(t, symbol_id)
 
 
 if __name__ == "__main__":
-    update_intraday_prices('A', 0)
+    update_all_prices()
