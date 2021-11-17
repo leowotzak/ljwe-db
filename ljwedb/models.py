@@ -95,7 +95,7 @@ class BarDataOneMin(Base):
     adj_close_price = Column(Float)
     volume = Column(Integer, nullable=False)
     dividend_amount = Column(Float)
- 
+
     def __repr__(self):
         return f"<BarDataOneMin id={self.symbol_id} ts={self.timestamp}>"
 

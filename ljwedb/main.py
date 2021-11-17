@@ -35,11 +35,18 @@ log.addHandler(logging.StreamHandler())
 
 COL_NAMES = {
     "1. open": "open_price",
+    "open": "open_price",
+    "high": "high_price",
+    "low": "low_price",
+    "close": "close_price",
     "2. high": "high_price",
     "3. low": "low_price",
     "4. close": "close_price",
+    "5. adjusted close": "adj_close_price",
     "5. volume": "volume",
-    "8. split coefficient": "split_coeff"
+    "6. volume": "volume",
+    "7. dividend amount": "dividend_amount",
+    "8. split coefficient": "split_coeff",
 }
 
 INTRADAY_MODELS = {
@@ -98,7 +105,11 @@ def _generate_query(
 ) -> dict:
     """Produces an appropriate parameter set for each endpoint"""
 
-    function = function + "_ADJUSTED" if Config.adjusted else function
+    function = (
+        function + "_ADJUSTED"
+        if Config.adjusted and not "INTRADAY" in function
+        else function
+    )
 
     params = {
         "function": function,
@@ -159,7 +170,13 @@ def _get_weekly_equity_data(symbol: str) -> pd.DataFrame:
     params = _generate_query("TIME_SERIES_WEEKLY", symbol=symbol, datatype=True)
 
     res = requests.get(Config.base_url, params=params)
-    return pd.read_json(json.dumps(res.json()["Weekly Time Series"]), orient="index")
+
+    if res.json().get("Weekly Time Series"):
+        k = res.json().get("Weekly Time Series")
+    elif res.json().get("Weekly Adjusted Time Series"):
+        k = res.json().get("Weekly Adjusted Time Series")
+
+    return pd.read_json(json.dumps(k), orient="index")
 
 
 @bar_data_wrapper
@@ -169,7 +186,13 @@ def _get_monthly_equity_data(symbol: str) -> pd.DataFrame:
     params = _generate_query("TIME_SERIES_MONTHLY", symbol=symbol, datatype=True)
 
     res = requests.get(Config.base_url, params=params)
-    return pd.read_json(json.dumps(res.json()["Monthly Time Series"]), orient="index")
+
+    if res.json().get("Monthly Time Series"):
+        k = res.json().get("Monthly Time Series")
+    elif res.json().get("Monthly Adjusted Time Series"):
+        k = res.json().get("Monthly Adjusted Time Series")
+
+    return pd.read_json(json.dumps(k), orient="index")
 
 
 @bar_data_wrapper
@@ -195,10 +218,13 @@ def _get_intraday_equity_data_interval_extended(
     """Requests intraday (extended) bar info for provided symbol at given interval for each slice"""
 
     params = _generate_query(
-        "TIME_SERIES_INTRADAY_EXTENDED", symbol=symbol, interval=interval, slice=slice_
+        "TIME_SERIES_INTRADAY_EXTENDED", symbol=symbol, interval=interval, slice_=slice_
     )
+
     res = requests.get(Config.base_url, params=params)
-    return pd.read_json(json.dumps(res.json()[""]))
+    df = pd.read_csv(StringIO(str(res.content, encoding="utf-8")), index_col=["time"])
+    df.index = pd.to_datetime(df.index)
+    return df
 
 
 def update_equities():
