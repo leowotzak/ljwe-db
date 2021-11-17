@@ -1,4 +1,4 @@
-from config import Config
+from .config import Config
 from sqlalchemy import Column, DateTime, Float, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 

@@ -1,40 +1,14 @@
-"""LJWE DB.
-
-A collection of functions that facilitate the creating, updating, and appending the 
-master securities database. The scripts use pandas to format the data properly and 
-requests to parse http requests/responses.
-
-Input
-
-    None
-
-Output
-
-    None
-
-
-
-"""
-
-import json
-import logging
-import time
-from datetime import datetime
-from io import StringIO
 from typing import Generator
-
-import pandas as pd
+from io import StringIO
+from ..models import SESSION, Symbols
+from ..config import Config
+from datetime import datetime
+import json
 import requests
-from config import Config
-from models import (SESSION, BarDataDaily, BarDataFifteenMin, BarDataFiveMin,
-                    BarDataMonthly, BarDataOneHour, BarDataOneMin,
-                    BarDataThirtyMin, BarDataWeekly, Symbols)
+import pandas as pd
+import logging
 
-logging.basicConfig(filename="main.log", filemode="a", level=logging.DEBUG)
 log = logging.getLogger(__name__)
-log.addHandler(logging.StreamHandler())
-
-PER_REQUEST_WAIT = 15
 
 COL_NAMES = {
     "1. open": "open_price",
@@ -50,14 +24,6 @@ COL_NAMES = {
     "6. volume": "volume",
     "7. dividend amount": "dividend_amount",
     "8. split coefficient": "split_coeff",
-}
-
-INTRADAY_MODELS = {
-    "1min": BarDataOneMin,
-    "5min": BarDataFiveMin,
-    "15min": BarDataFifteenMin,
-    "30min": BarDataThirtyMin,
-    "60min": BarDataOneHour,
 }
 
 SLICES = [
@@ -139,11 +105,13 @@ def _generate_query(
     return params
 
 
-def _get_database_symbols(syms: list) -> Generator:
+def database_symbols(syms: list) -> Generator:
     """Queries database for current symbols"""
+
+    # FIXME add types to generator
     with SESSION() as session:
         if syms:
-            query = session.query(Symbols).filter(Symbols.ticker in syms)
+            query = session.query(Symbols).filter(Symbols.ticker in syms).first()
         else:
             query = session.query(Symbols).all()
 
@@ -151,14 +119,14 @@ def _get_database_symbols(syms: list) -> Generator:
         yield bar.symbol_id, bar.__dict__
 
 
-def _get_listed_symbols() -> pd.DataFrame:
+def listed_symbols() -> pd.DataFrame:
     """Retrieves currently listed symbols from alphavantage"""
     res = requests.get(Config.base_url, params=_generate_query("LISTING_STATUS"))
     csv = str(res.content, encoding="utf-8")
     return pd.read_csv(StringIO(csv), header=0)
 
 
-def _get_wiki_sp500() -> pd.DataFrame:
+def wiki_sp500() -> pd.DataFrame:
     """Queries S&P 500 companies for simplicity & size constraints from DB"""
     with SESSION() as session:
         members = pd.read_html(
@@ -180,7 +148,7 @@ def _get_wiki_sp500() -> pd.DataFrame:
 
 
 @bar_data_wrapper
-def _get_daily_equity_data(symbol: str) -> pd.DataFrame:
+def daily_equity_data(symbol: str) -> pd.DataFrame:
     """Requests daily bar data for the provided symbol from alphavantage"""
 
     params = _generate_query(
@@ -192,7 +160,7 @@ def _get_daily_equity_data(symbol: str) -> pd.DataFrame:
 
 
 @bar_data_wrapper
-def _get_weekly_equity_data(symbol: str) -> pd.DataFrame:
+def weekly_equity_data(symbol: str) -> pd.DataFrame:
     """Requests weekly bar data for the provided symbol"""
 
     params = _generate_query("TIME_SERIES_WEEKLY", symbol=symbol, datatype=True)
@@ -208,7 +176,7 @@ def _get_weekly_equity_data(symbol: str) -> pd.DataFrame:
 
 
 @bar_data_wrapper
-def _get_monthly_equity_data(symbol: str) -> pd.DataFrame:
+def monthly_equity_data(symbol: str) -> pd.DataFrame:
     """Requests monthly bar data for the provided symbol"""
 
     params = _generate_query("TIME_SERIES_MONTHLY", symbol=symbol, datatype=True)
@@ -224,7 +192,7 @@ def _get_monthly_equity_data(symbol: str) -> pd.DataFrame:
 
 
 @bar_data_wrapper
-def _get_intraday_equity_data_interval(symbol: str, interval: str) -> pd.DataFrame:
+def intraday_equity_data_interval(symbol: str, interval: str) -> pd.DataFrame:
     """Requests intraday (or extended intraday) bar info for provided symbol at given interval"""
 
     params = _generate_query(
@@ -240,7 +208,7 @@ def _get_intraday_equity_data_interval(symbol: str, interval: str) -> pd.DataFra
 
 
 @bar_data_wrapper
-def _get_intraday_equity_data_interval_extended(
+def intraday_equity_data_interval_extended(
     symbol: str, interval: str, slice_: str
 ) -> pd.DataFrame:
     """Requests intraday (extended) bar info for provided symbol at given interval for each slice"""
@@ -253,108 +221,3 @@ def _get_intraday_equity_data_interval_extended(
     df = pd.read_csv(StringIO(str(res.content, encoding="utf-8")), index_col=["time"])
     df.index = pd.to_datetime(df.index)
     return df
-
-
-def update_equities():
-    """Adds/updates symbols table with data from alphavantage"""
-    with SESSION() as session:
-        for symbol_id, bar_data in _get_listed_symbols().iterrows():
-            ts = datetime.utcnow()  # ! There are entries without 'name' fields
-            bar = Symbols(
-                symbol_id=symbol_id,
-                name=bar_data["name"],
-                ticker=bar_data["symbol"],
-                asset_type=bar_data["assetType"],
-                created_date=ts,
-                last_updated_date=ts,
-            )
-            log.debug("Adding symbol %s to database", bar)
-            session.merge(bar)
-            session.commit()
-        log.debug("Committing session...")
-        session.commit()
-
-
-def update_daily_prices(symbol: str, symbol_id: int):
-    with SESSION() as session:
-        for ts, b in _get_daily_equity_data(symbol).iterrows():
-            m = BarDataDaily(symbol_id=symbol_id, timestamp=ts, **b)
-            session.merge(m)
-        else:
-            log.debug("Committing new daily price data for %s", symbol)
-            session.commit()
-
-
-def update_weekly_prices(symbol: str, symbol_id: int):
-    with SESSION() as session:
-        for ts, b in _get_weekly_equity_data(symbol).iterrows():
-            m = BarDataWeekly(symbol_id=symbol_id, timestamp=ts, **b)
-            session.merge(m)
-        else:
-            log.debug("Committing new weekly price data for %s", symbol)
-            session.commit()
-
-
-def update_monthly_prices(symbol: str, symbol_id: int):
-    with SESSION() as session:
-        for ts, b in _get_monthly_equity_data(symbol).iterrows():
-            m = BarDataMonthly(symbol_id=symbol_id, timestamp=ts, **b)
-            session.merge(m)
-        else:
-            log.debug("Committing new monthly price data for %s", symbol)
-            session.commit()
-
-
-def update_intraday_prices(symbol: str, symbol_id: int):
-    with SESSION() as session:
-        for interval, model in INTRADAY_MODELS.items():
-            for ts, b in _get_intraday_equity_data_interval(
-                symbol, interval
-            ).iterrows():
-                m = model(symbol_id=symbol_id, timestamp=ts, **b)
-                session.merge(m)
-            else:
-                log.debug(
-                    "Committing new intraday (%s) price data for %s", interval, symbol
-                )
-                session.commit()
-
-
-def update_intraday_extended_history_prices(symbol, symbol_id):
-    with SESSION() as session:
-        for slice_ in SLICES:
-            for interval, model in INTRADAY_MODELS.items():
-                for ts, b in _get_intraday_equity_data_interval_extended(
-                    symbol, interval, slice_
-                ).iterrows():
-                    m = model(symbol_id=symbol_id, timestamp=ts, **b)
-                    session.merge(m)
-                else:
-                    log.debug(
-                        "Committing new intraday extended (%s) price data for %s",
-                        interval,
-                        symbol,
-                    )
-                    session.commit()
-                time.sleep(PER_REQUEST_WAIT)
-
-
-def update_all_prices(symbols=None):
-    """Adds/updates price data for each symbol in symbols table"""
-    # ? how to run without any input and do nothing
-    if not symbols:
-        symbols = []
-
-    for symbol_id, bar_data in _get_database_symbols(symbols):
-        t = bar_data["ticker"]
-        update_daily_prices(t, symbol_id)
-        time.sleep(PER_REQUEST_WAIT)
-        update_weekly_prices(t, symbol_id)
-        time.sleep(PER_REQUEST_WAIT)
-        update_monthly_prices(t, symbol_id)
-        time.sleep(PER_REQUEST_WAIT)
-        update_intraday_extended_history_prices(t, symbol_id)
-
-
-if __name__ == "__main__":
-    update_all_prices()
