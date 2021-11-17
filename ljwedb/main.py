@@ -39,6 +39,7 @@ COL_NAMES = {
     "3. low": "low_price",
     "4. close": "close_price",
     "5. volume": "volume",
+    "8. split coefficient": "split_coeff"
 }
 
 INTRADAY_MODELS = {
