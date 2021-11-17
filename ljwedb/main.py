@@ -33,6 +33,8 @@ logging.basicConfig(filename="main.log", filemode="a", level=logging.DEBUG)
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
 
+PER_REQUEST_WAIT = 15
+
 COL_NAMES = {
     "1. open": "open_price",
     "open": "open_price",
@@ -298,12 +300,15 @@ def update_intraday_extended_history_prices(symbol, symbol_id):
                 else:
                     log.debug("Committing new intraday extended (%s) price data for %s", interval, symbol)
                     session.commit()
+                time.sleep(PER_REQUEST_WAIT)
 
 
 def update_all_prices(*symbols):
     """Adds/updates price data for each symbol in symbols table"""
     for symbol_id, bar_data in _get_database_symbols(symbols):
-        pass
+        time.sleep(PER_REQUEST_WAIT)
+        time.sleep(PER_REQUEST_WAIT)
+        time.sleep(PER_REQUEST_WAIT)
 
 
 if __name__ == "__main__":
