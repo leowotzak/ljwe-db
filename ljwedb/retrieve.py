@@ -1,12 +1,16 @@
-from typing import Generator
-from io import StringIO
-from ..models import SESSION, Symbols
-from ..config import Config
-from datetime import datetime
+"""Collection of functions that retrieve and format data from alpha vantage"""
+
 import json
-import requests
-import pandas as pd
 import logging
+from datetime import datetime
+from io import StringIO
+from typing import Generator
+
+import pandas as pd
+import requests
+
+from .config import Config
+from .models import SESSION, Symbols
 
 log = logging.getLogger(__name__)
 
