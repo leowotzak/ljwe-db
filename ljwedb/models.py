@@ -1,11 +1,12 @@
-from .config import Config
+"""Database models file"""
+
 from sqlalchemy import Column, DateTime, Float, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
+from .config import Config
+
 engine = create_engine(Config.database_url)
 SESSION = sessionmaker(engine)
-
-
 Base = declarative_base()
 
 

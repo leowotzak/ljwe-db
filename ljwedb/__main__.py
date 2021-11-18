@@ -3,12 +3,11 @@
 import logging
 import time
 
+from . import retrieve, update
+
 logging.basicConfig(filename="main.log", filemode="a", level=logging.DEBUG)
 log = logging.getLogger(__name__)
 log.addHandler(logging.StreamHandler())
-
-from .update import update
-from .retrieve import retrieve
 
 PER_REQUEST_WAIT = 15
 
