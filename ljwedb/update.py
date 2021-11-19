@@ -71,7 +71,7 @@ def daily_prices(symbol: str, symbol_id: int):
 def weekly_prices(symbol: str, symbol_id: int):
     with SESSION() as session:
         for ts, b in retrieve.weekly_equity_data(symbol).iterrows():
-            m = BarDataWeekly(symbol_id=symbol_id, timestamp=ts, **b)
+            m = bar_data_weekly(symbol_id=symbol_id, timestamp=ts, **b)
             session.merge(m)
         else:
             log.debug("Committing new weekly price data for %s", symbol)
@@ -81,7 +81,7 @@ def weekly_prices(symbol: str, symbol_id: int):
 def monthly_prices(symbol: str, symbol_id: int):
     with SESSION() as session:
         for ts, b in retrieve.monthly_equity_data(symbol).iterrows():
-            m = BarDataMonthly(symbol_id=symbol_id, timestamp=ts, **b)
+            m = bar_data_monthly(symbol_id=symbol_id, timestamp=ts, **b)
             session.merge(m)
         else:
             log.debug("Committing new monthly price data for %s", symbol)
