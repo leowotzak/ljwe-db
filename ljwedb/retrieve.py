@@ -142,8 +142,6 @@ def wiki_sp500() -> pd.DataFrame:
                 ticker=bar["Symbol"],
                 sector=bar["GICS Sector"],
                 asset_type="stock",
-                created_date=datetime.utcnow(),
-                last_updated_date=datetime.utcnow(),
             )
             log.debug("Adding ticker: %s to 'Symbol' table", bar["Symbol"])
             session.merge(m)

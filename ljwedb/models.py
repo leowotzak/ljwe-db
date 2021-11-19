@@ -94,8 +94,8 @@ class BarData:
     volume            = Column(Integer, nullable=False)
     dividend_amount   = Column(Float)
     split_coeff       = Column(Float)
-    # created_date = Column(DateTime, default=datetime.utcnow(), server_default=text('CURRENT_TIMESTAMP'))
-    # last_updated_date = Column(DateTime, default=datetime.utcnow(), server_default=text('CURRENT_TIMESTAMP'), onupdate=text('CURRENT_TIMESTAMP'))
+    created_date = Column(DateTime, default=datetime.utcnow())
+    last_updated_date = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
 
 
 # * Empty table classes since currently each table is identical
