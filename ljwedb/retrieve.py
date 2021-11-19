@@ -1,4 +1,11 @@
-"""Collection of functions that retrieve and format data from alpha vantage"""
+"""Namespace of functions that retrieve and format data from alpha vantage
+
+Manufactures queries, and sends GET requests to alpha vantage. Extracted
+results are transformed into a format that is recognized and loaded by 
+the database schema.
+
+
+"""
 
 import json
 import logging

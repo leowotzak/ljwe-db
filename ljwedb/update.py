@@ -1,3 +1,12 @@
+"""Namespace of functions that update the Database
+
+Functions initialize a database session, request each alpha vantage
+endpoint, and insert/update new data.
+
+    note: each request has a hard-coded 15 second wait timer
+
+
+"""
 import logging
 from datetime import datetime
 

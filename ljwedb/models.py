@@ -74,7 +74,14 @@ class Symbol(Base):
 
 
 class BarData:
+    """Contains security's information at a given time interval.
 
+    For example, each day a stock has an open price, high price, low price, 
+    and close price, in addition to the # of stocks sold during that day.
+
+    This class is used as a mixin to organize time series data among different
+    tables by frequency.
+    """
     @declared_attr
     def symbol_id(cls):
         return Column(Integer, ForeignKey('symbol.symbol_id'), primary_key=True)
