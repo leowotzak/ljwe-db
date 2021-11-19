@@ -1,18 +1,20 @@
 import logging
 from datetime import datetime
 
+from sqlalchemy.dialects.mysql import insert
+
 from . import retrieve
 from .config import Config
 from .models import (
     SESSION,
-    BarDataDaily,
-    BarDataFifteenMin,
-    BarDataFiveMin,
-    BarDataMonthly,
-    BarDataOneHour,
-    BarDataOneMin,
-    BarDataThirtyMin,
-    BarDataWeekly,
+    bar_data_daily,
+    bar_data_weekly,
+    bar_data_monthly,
+    bar_data_1min,
+    bar_data_5min,
+    bar_data_15min,
+    bar_data_30min,
+    bar_data_1h,
 )
 
 log = logging.getLogger(__name__)
@@ -21,11 +23,11 @@ log = logging.getLogger(__name__)
 PER_REQUEST_WAIT = 15
 
 INTRADAY_MODELS = {
-    "1min": BarDataOneMin,
-    "5min": BarDataFiveMin,
-    "15min": BarDataFifteenMin,
-    "30min": BarDataThirtyMin,
-    "60min": BarDataOneHour,
+    "1min": bar_data_1min,
+    "5min": bar_data_5min,
+    "15min": bar_data_15min,
+    "30min": bar_data_30min,
+    "60min": bar_data_1h,
 }
 
 SLICES = [
@@ -59,7 +61,7 @@ SLICES = [
 def daily_prices(symbol: str, symbol_id: int):
     with SESSION() as session:
         for ts, b in retrieve.daily_equity_data(symbol).iterrows():
-            m = BarDataDaily(symbol_id=symbol_id, timestamp=ts, **b)
+            m = bar_data_daily(symbol_id=symbol_id, timestamp=ts, **b)
             session.merge(m)
         else:
             log.debug("Committing new daily price data for %s", symbol)
