@@ -1,7 +1,28 @@
-"""Database models file"""
+"""Database Models
 
-from sqlalchemy import Column, DateTime, Float, Integer, String, create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+Currently contains the following:
+
+    Symbols table to track each individual security & its metadata
+
+    Interday bar data:
+        > daily
+        > weekly
+        > monthly
+
+    Intraday bar data:
+        > 1 minute
+        > 5 minute
+        > 15 minute
+        > 30 minute
+        > 60 minute
+
+
+"""
+from datetime import datetime
+
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, Text, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+from sqlalchemy.sql import func
 
 from .config import Config
 

@@ -13,7 +13,6 @@ from .models import (
     BarDataOneMin,
     BarDataThirtyMin,
     BarDataWeekly,
-    Symbols,
 )
 
 log = logging.getLogger(__name__)
