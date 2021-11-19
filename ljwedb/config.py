@@ -17,6 +17,12 @@ class Config:
 
     """
     api_key = os.environ.get("API_KEY")
+    output_size = "compact"
+    data_type = "json"
+    adjusted = True
+    base_url = "https://www.alphavantage.co/query"
+    database_url = os.environ.get("DATABASE_URL")
+
 class FullConfig:
     """Complete configuration
 
@@ -24,6 +30,9 @@ class FullConfig:
     from alpha vantage
 
     """
+    api_key = os.environ.get("API_KEY")
+    output_size = "full"
+    data_type = "json"
     adjusted = True
     base_url = "https://www.alphavantage.co/query"
     database_url = os.environ.get("DATABASE_URL")
