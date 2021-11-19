@@ -27,6 +27,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     Integer,
+    MetaData,
     String,
     Text,
     create_engine,
@@ -40,13 +41,21 @@ from .config import Config
 
 engine = create_engine(Config.database_url)
 SESSION = sessionmaker(engine)
-Base = declarative_base()
+
+meta = MetaData(naming_convention={
+  "ix": 'ix_%(column_0_label)s',
+  "uq": "uq_%(table_name)s_%(column_0_name)s",
+  "ck": "ck_%(table_name)s_%(constraint_name)s",
+  "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+  "pk": "pk_%(table_name)s"
+})
+Base = declarative_base(metadata=meta)
 
 
 class Symbol(Base):
     """Model used for different securities i.e. stocks, bonds, ETFs etc..."""
 
-    __tablename__ = "symbol"
+    __tablename__ = 'symbol'
 
     symbol_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(200), nullable=False)
