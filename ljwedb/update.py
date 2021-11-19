@@ -9,6 +9,7 @@ endpoint, and insert/update new data.
 """
 import logging
 from datetime import datetime
+import time
 
 from sqlalchemy.dialects.mysql import insert
 
