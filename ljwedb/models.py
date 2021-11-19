@@ -2,7 +2,8 @@
 
 Currently contains the following:
 
-    Symbols table to track each individual security & its metadata
+    Symbol table to track each individual security & its metadata,
+    see repo for a diagram
 
     Interday bar data:
         > daily
@@ -20,8 +21,17 @@ Currently contains the following:
 """
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, Text, create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+from sqlalchemy import (
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    create_engine,
+)
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy.sql import func
 
 from .config import Config
@@ -31,10 +41,10 @@ SESSION = sessionmaker(engine)
 Base = declarative_base()
 
 
-class Symbols(Base):
+class Symbol(Base):
     """Model used for different securities i.e. stocks, bonds, ETFs etc..."""
 
-    __tablename__ = "symbols"
+    __tablename__ = "symbol"
 
     symbol_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)

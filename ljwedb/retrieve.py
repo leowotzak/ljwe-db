@@ -10,7 +10,7 @@ import pandas as pd
 import requests
 
 from .config import Config
-from .models import SESSION, Symbols
+from .models import SESSION, Symbol
 
 log = logging.getLogger(__name__)
 
@@ -115,9 +115,9 @@ def database_symbols(syms: list) -> Generator:
     # FIXME add types to generator
     with SESSION() as session:
         if syms:
-            query = session.query(Symbols).filter(Symbols.ticker in syms).first()
+            query = session.query(Symbol).filter(Symbol.ticker in syms).first()
         else:
-            query = session.query(Symbols).all()
+            query = session.query(Symbol).all()
 
     for bar in query:
         yield bar.symbol_id, bar.__dict__
@@ -137,7 +137,7 @@ def wiki_sp500() -> pd.DataFrame:
             "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
         )[0]
         for idx, bar in members.iterrows():
-            m = Symbols(
+            m = Symbol(
                 name=bar["Security"],
                 ticker=bar["Symbol"],
                 sector=bar["GICS Sector"],
@@ -145,7 +145,7 @@ def wiki_sp500() -> pd.DataFrame:
                 created_date=datetime.utcnow(),
                 last_updated_date=datetime.utcnow(),
             )
-            log.debug("Adding ticker: %s to 'Symbols' table", bar["Symbol"])
+            log.debug("Adding ticker: %s to 'Symbol' table", bar["Symbol"])
             session.merge(m)
         else:
             session.commit()
