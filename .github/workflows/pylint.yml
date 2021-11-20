@@ -20,4 +20,4 @@ jobs:
         pip install pylint black
     - name: Analysing the code with pylint
       run: |
-        black ./ljwedb --exclude="models.py"
+        pylint ./ljwedb
