@@ -56,7 +56,12 @@ SLICES = [
     "year2month11",
     "year2month12",
 ]
-
+def Ticker(symbol: str) -> bool:
+    """Type for valid ticker structures
+    
+    Constraints are: contiguous string of all caps letters
+    """
+    return True if re.match(r'[A-Z]+', symbol) and isinstance(symbol, str) else False
 
 def bar_data_wrapper(func):
     """Standardizes column names for any bar data"""
