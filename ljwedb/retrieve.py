@@ -1,6 +1,7 @@
 """Collection of functions that retrieve and format data from alpha vantage"""
 
 import json
+import re
 import logging
 from datetime import datetime
 from io import StringIO
@@ -56,17 +57,24 @@ SLICES = [
     "year2month11",
     "year2month12",
 ]
+
+
 def Ticker(symbol: str) -> bool:
     """Type for valid ticker structures
-    
+
     Constraints are: contiguous string of all caps letters
     """
-    return True if re.match(r'[A-Z]+', symbol) and isinstance(symbol, str) else False
+    if isinstance(symbol, str):
+        return True if bool(re.match(r"[A-Z]+", symbol)) else False
+    else:
+        return False
+
 
 def bar_data_wrapper(func):
     """Standardizes column names for any bar data"""
 
     def wrapper(*args, **kwargs):
+        assert Ticker(args[0])
         res: pd.DataFrame = func(*args, **kwargs)
         return res.rename(columns=COL_NAMES)
 
@@ -163,6 +171,8 @@ def daily_equity_data(symbol: str) -> pd.DataFrame:
     )
 
     res = requests.get(Config.base_url, params=params)
+    assert "Error Message" not in res.json()
+
     return pd.read_json(json.dumps(res.json()["Time Series (Daily)"]), orient="index")
 
 
