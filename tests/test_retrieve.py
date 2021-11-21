@@ -2,6 +2,8 @@ import pytest
 import requests
 import re
 
+import pandas as pd
+
 from ljwedb.retrieve import COL_NAMES, SLICES, daily_equity_data
 
 
@@ -18,27 +20,13 @@ def test_slices():
 
 
 def test_daily_equity_data():
+    with pytest.raises(AssertionError) as e_info:
+        daily_equity_data(1)
+        daily_equity_data("@thisis!no")
+        daily_equity_data("AVBddd")
+        daily_equity_data("zxyAVB")
+        daily_equity_data("AAZEESAKKEP")
 
-    # Cases
-    # 1) symbol isn't string
-    # 2) symbol is string but isn't a ticker
-    # 3) symbol is a string and a ticker but doesn't exist
-    # 4) symbol is string and does exist
-
-    assert daily_equity_data(1) is AssertionError
-    y = daily_equity_data("@thisis!no")
-    z = daily_equity_data("AAZEESAKKEP")
-    zz = daily_equity_data("AVB")
-    zzz = daily_equity_data("AVBddd")
-    zzzz = daily_equity_data("zxyAVB")
-
-    params = {
-        "function": "TIME_SERIES_DAILY",
-        "symbol": "IBM",
-        "apikey": "JY78QD96PHNCLF5D",
-    }
-
-    t = requests.get("https://www.alphavantage.co/query", params=params)
-    print(t.content)
-
-    pass
+    valid = daily_equity_data("AVB")
+    assert isinstance(valid, pd.DataFrame)
+    assert all(col in COL_NAMES.values() for col in valid.columns)
