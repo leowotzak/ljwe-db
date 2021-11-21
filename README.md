@@ -1,9 +1,49 @@
 # LJWE Database
 
-Database setup and management scripts for LJWE trading system. Utilizes `alembic` to track revisions to database schema. Currently pulls data from Alpha Vantage in the following formats: intraday, daily, weekly, monthly. Data is reformatted using `pandas` and committed to the database using `SQLAlchemy`.
+`SQLAlchemy` database setup and management scripts for the Master Securities Database. Utilizes `alembic` to track revisions to database schema and `pandas` to extract, transform, & load data. Requests asset price and metadata from [Alpha Vantage](https://www.alphavantage.co/) and automatically inserts into or updates the database.
+
+This is used as part of a full stack application, and will is currently deployed with `PostgreSQL` on an `AWS EC-2` instance.
+
+## How to use
+
+Just clone the repository and run the following command:
+
+```bash
+python -m ljwe-db
+```
+
+## Modules
+
+### _**retrieve.py**_
+
+---
+
+Namespace of functions that retrieve and format data from alpha vantage
+
+Manufactures queries, and sends GET requests to alpha vantage. Extracted
+results are transformed into a format that is recognized and loaded by the database schema.
+
+---
+
+### _**update.py**_
+
+Namespace of functions that update the Database
+
+Functions initialize a database session, request each alpha vantage
+endpoint, and insert/update new data.
+
+---
+
+### _**models.py**_
+
+| Symbol Data | Interday Data | Intraday Data |
+|----|----|----|
+| symbol | daily | one minute |
+|| weekly | five minute |
+|| monthly | fifteen minute |
+||| thirty minute |
+||| sixty minute |
 
 ![database_schema](ljwedb.png)
 
-The functions fall primary into two categories, retrievers, which query and format data from Alpha Vantage, and updaters, which take that data and update the database.
-
-This database is used as part of a full stack application, and will be deployed on PostgreSQL during production.
+Learn more: (https://www.leojwotzak.com)
