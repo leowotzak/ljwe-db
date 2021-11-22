@@ -1,6 +1,5 @@
 import React, {useState} from "react"
-import {Container, Row, Col} from "react-bootstrap"
-import {LoginForm, NavBar} from "../components"
+import {LoginForm, NavBar, FrequencySelector, SymbolTable} from "../components"
 import Select from "react-select"
 
 
@@ -26,6 +25,7 @@ export default function Home() {
 
 
     <NavBar />
+    <FrequencySelector />
 
 
 
