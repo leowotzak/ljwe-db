@@ -21,7 +21,7 @@ export default () => {
 
   const [options, setOptions] = useState({})
 
-  fetch('/ljwe/symbol/?freq=daily&symbol_id=0')
+  fetch('http://localhost:5000/ljwe/symbol/?freq=daily&symbol_id=0')
   .then(res => res.json())
   .then(data => setOptions(data))
   .catch((err) => {console.error(err)})
