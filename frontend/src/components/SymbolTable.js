@@ -21,10 +21,10 @@ export default () => {
 
   const [options, setOptions] = useState({})
 
-  // fetch('http://localhost:5000/ljwe/symbol/?freq=daily&symbol_id=0')
-  // .then(res => res.json())
-  // .then(data => setOptions(data))
-  // .catch((err) => {console.error(err)})
+  fetch('/ljwe/symbol/?freq=daily&symbol_id=0')
+  .then(res => res.json())
+  .then(data => setOptions(data))
+  .catch((err) => {console.error(err)})
 
   return (
     <Table>
