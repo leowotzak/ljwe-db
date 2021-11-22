@@ -33,6 +33,7 @@ export default function Home() {
     <FrequencySelector />
 
 
+    <Select options={options} isMulti onChange={handleChange}/>
 
     <SymbolTable />
     </Container>
