@@ -1,6 +1,11 @@
 import React, {useState} from "react"
+import {Container, Row, Col, Pagination} from "react-bootstrap"
 import {LoginForm, NavBar, FrequencySelector, SymbolTable} from "../components"
 import Select from "react-select"
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import "../styles/global.scss"
 
 
 
