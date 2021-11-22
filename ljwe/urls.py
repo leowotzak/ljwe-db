@@ -16,7 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from api import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('ljwe/', include('api.urls'))
+    path('ljwe/', include('api.urls')),
+    path('', views.FrontendAppView.as_view())
 ]
