@@ -6,5 +6,10 @@
 
 module.exports = {
   /* Your site config here */
+  proxy: {
+    prefix: "/ljwe",
+    url: "http://localhost:5000"
+  },
+
   plugins: [],
 }
