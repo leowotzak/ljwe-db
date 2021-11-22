@@ -29,12 +29,7 @@ export default function Home() {
 
 
 
-    <Row>
-      <Col>
-    <LoginForm />
-    {/* <Select options={options} isMulti onChange={handleChange}/> */}
-      </Col>
-      </Row>
+    <SymbolTable />
     </Container>
   )
 }
