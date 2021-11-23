@@ -16,9 +16,6 @@ symbols = []
 # if not symbols:
 #     symbols = []
 
-retrieve.wiki_sp500()
-
-
-# for symbol_id, bar_data in retrieve.database_symbols(symbols):
-#     update.daily_prices(bar_data["ticker"], symbol_id)
-#     time.sleep(PER_REQUEST_WAIT)
+for symbol_id, bar_data in retrieve.database_symbols(symbols):
+    update.monthly_prices(bar_data["ticker"], symbol_id)
+    time.sleep(PER_REQUEST_WAIT)
