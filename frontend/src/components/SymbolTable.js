@@ -22,11 +22,13 @@ export default () => {
   const [options, setOptions] = useState({})
 
   useEffect(() => {
-    fetch('/ljwe/symbol/?freq=daily&symbol_id=0')
+    fetch('/ljwe/symbol/?freq=monthly&symbol_id=1')
     .then(res => res.json())
     .then(data => setOptions(data))
     .catch((err) => {console.error(err)})
     }, []);
+
+    console.log('ping');
 
   return (
     <Table>
