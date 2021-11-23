@@ -32,7 +32,6 @@ class SymbolViewSet(viewsets.ModelViewSet):
 
         x = request.query_params
         y = QuerySerializer(self.queryset.select_related().first())
-        print(self.queryset.select_related().first())
         return Response(y.data)
 
 
