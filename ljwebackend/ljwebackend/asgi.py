@@ -1,5 +1,5 @@
 """
-ASGI config for ljwe project.
+ASGI config for ljwebackend project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ljwe.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ljwebackend.settings')
 
 application = get_asgi_application()
