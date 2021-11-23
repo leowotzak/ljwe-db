@@ -33,6 +33,5 @@
   },
   "bugs": {
     "url": "https://github.com/gatsbyjs/gatsby/issues"
-  },
-  "proxy": "http://localhost:8000"
+  }
 }
