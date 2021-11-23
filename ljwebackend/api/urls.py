@@ -18,21 +18,17 @@ class QuerySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Symbol
-        fields = ['symbol_id', 'ticker', 'name', 'description', 'sector', 'asset_type'] # ! , 'bardatadaily_set'
+        fields = ['symbol_id', 'ticker', 'name', 'description', 'sector', 'asset_type']
 
 class SymbolViewSet(viewsets.ModelViewSet):
-    # for x in queryset:
-    #     y = x.bardatadaily_set.all()
-    #     for z in y:
-    #         print(dir(z))
-    queryset = Symbol.objects.all()
+    queryset = Symbol.objects.using('SecuritiesMaster')
     serializer_class = QuerySerializer
 
     def list(self, request):
-        x = request.query_params
-        y = QuerySerializer(self.queryset.select_related().first())
-        print(y.data)
-        return Response(y.data)
+        # x = request.query_params
+        # y = QuerySerializer(self.queryset.all())
+        x = QuerySerializer(self.queryset.all(), many=True)
+        return Response(x.data)
 
 
 router = routers.DefaultRouter()

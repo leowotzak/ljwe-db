@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import { Table } from "react-bootstrap"
 
 
 const SymbolRow = ({symbol_id, ticker, name, description, sector, asset_type}) => {
-
-  console.log(symbol_id, ticker, name, description, sector, asset_type)
 
   return (
     <tr>
@@ -19,9 +17,7 @@ const SymbolRow = ({symbol_id, ticker, name, description, sector, asset_type}) =
 }
 
 
-export default (data) => {
-
-  const [options, setOptions] = useState({})
+export default ({allSymbolData}) => {
 
   return (
     <Table>
@@ -34,9 +30,8 @@ export default (data) => {
         </tr>
         </thead>
         <tbody>
-          {
-            data.map(({node}) => SymbolRow(node))
-          }
+          {allSymbolData.map(i => SymbolRow(i))}
+
         </tbody>
     </Table>
   )
