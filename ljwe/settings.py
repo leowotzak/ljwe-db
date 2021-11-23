@@ -89,14 +89,6 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    },
-    'SecuritiesMaster': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'SecuritiesMaster',
-        'USER': 'database',
-        'PASSWORD': 'password',
-        'HOST': '54.145.231.149',
-        'PORT': '5432',
     }
 }
 
