@@ -190,6 +190,7 @@ def monthly_equity_data(symbol: str) -> pd.DataFrame:
     params = _generate_query("TIME_SERIES_MONTHLY", symbol=symbol, datatype=True)
 
     res = requests.get(Config.base_url, params=params)
+    log.debug(res.json())
 
     if res.json().get("Monthly Time Series"):
         k = res.json().get("Monthly Time Series")
