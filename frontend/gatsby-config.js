@@ -8,10 +8,9 @@ module.exports = {
   /* Your site config here */
   proxy: {
     prefix: "/ljwe",
-    url: "http://localhost:".concat(process.env.PORT)
+    url: "http://localhost:8000"
   },
 
   plugins: [],
 }
 
-process.env.PORT

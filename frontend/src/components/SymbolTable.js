@@ -22,7 +22,7 @@ export default () => {
   const [options, setOptions] = useState({})
 
   useEffect(() => {
-    fetch('/ljwe/symbol/?freq=monthly&symbol_id=1')
+    fetch('http://127.0.0.1:8000/ljwe/symbol/?freq=monthly&symbol_id=1')
     .then(res => res.json())
     .then(data => setOptions(data))
     .catch((err) => {console.error(err)})
