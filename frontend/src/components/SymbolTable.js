@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react"
+import { graphql } from "gatsby"
 import { Table } from "react-bootstrap"
 
 
 const SymbolRow = ({symbol_id, ticker, name, description, sector, asset_type}) => {
+
+  console.log(symbol_id, ticker, name, description, sector, asset_type)
 
   return (
     <tr>
@@ -17,18 +20,9 @@ const SymbolRow = ({symbol_id, ticker, name, description, sector, asset_type}) =
 }
 
 
-export default () => {
+export default (data) => {
 
   const [options, setOptions] = useState({})
-
-  useEffect(() => {
-    fetch('http://https://blooming-journey-16393.herokuapp.com/ljwe/symbol/?freq=monthly&symbol_id=1')
-    .then(res => res.json())
-    .then(data => setOptions(data))
-    .catch((err) => {console.error(err)})
-    }, []);
-
-    console.log('ping');
 
   return (
     <Table>
@@ -41,8 +35,11 @@ export default () => {
         </tr>
         </thead>
         <tbody>
-          {SymbolRow(options)}
+          {
+            data.map(({node}) => SymbolRow(node))
+          }
         </tbody>
     </Table>
   )
 }
+

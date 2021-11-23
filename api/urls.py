@@ -18,7 +18,7 @@ class QuerySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Symbol
-        fields = ['symbol_id', 'ticker', 'name', 'description', 'sector', 'asset_type', 'bardatadaily_set']
+        fields = ['symbol_id', 'ticker', 'name', 'description', 'sector', 'asset_type', 'bardatadaily_set', 'bardataweekly_set', 'bardatamonthly_set']
 
 class SymbolViewSet(viewsets.ModelViewSet):
     # for x in queryset:

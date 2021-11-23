@@ -1,4 +1,5 @@
 import React, {useState} from "react"
+import {graphql} from "gatsby"
 import {Container, Row, Col, Pagination} from "react-bootstrap"
 import {LoginForm, NavBar, FrequencySelector, SymbolTable} from "../components"
 import {LineChart, Line} from 'recharts';
@@ -18,7 +19,7 @@ const options = [
 
 
 
-export default function Home() {
+export default ({data}) => {
 
   const [searchOptions, setSearchOptions] = useState([])
 
@@ -26,7 +27,8 @@ export default function Home() {
     console.log(e)
   )
 
-  const data = [{name: 'page A', uv: 400, pv: 2400, amt: 2400}, {name: 'page A', uv: 600, pv: 2400, amt: 2400}, {name: 'page A', uv: 1200, pv: 2400, amt: 2400}];
+  const ph_data = [{name: 'page A', uv: 400, pv: 2400, amt: 2400}, {name: 'page A', uv: 600, pv: 2400, amt: 2400}, {name: 'page A', uv: 1200, pv: 2400, amt: 2400}];
+  const symbols = data.allRestApiLjweSymbol.edges
 
   return (
   <Container align="center">
@@ -36,14 +38,32 @@ export default function Home() {
     <FrequencySelector />
 
 
-    <LineChart width={400} height={400} data={data}>
+    <LineChart width={400} height={400} data={ph_data}>
       <Line type="monotone" dataKey="uv" stroke="#8884d8" />
       </LineChart>
 
 
     <Select options={options} isMulti onChange={handleChange}/>
 
-    <SymbolTable />
+    {SymbolTable(symbols)}
     </Container>
   )
 }
+
+
+export const query = graphql`
+query {
+  allRestApiLjweSymbol {
+    edges {
+      node {
+        symbol_id
+        name
+        sector
+        ticker
+        asset_type
+      }
+    }
+  }
+}
+`
+
