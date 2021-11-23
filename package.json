@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "cd ljwefrontend && next build",
     "start": "next start"
   },
   "proxy": "http://localhost:8000",
