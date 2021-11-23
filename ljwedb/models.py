@@ -17,6 +17,9 @@ Currently contains the following:
         > 30 minute
         > 60 minute
 
+Most tables are empty because each table is identical, and
+the name of each class determines the table name.
+
 
 """
 from datetime import datetime
@@ -31,7 +34,7 @@ from sqlalchemy import (
     String,
     Text,
     create_engine,
-    TIMESTAMP
+    TIMESTAMP,
 )
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from sqlalchemy.ext.declarative import declared_attr
@@ -42,32 +45,34 @@ from .config import Config
 engine = create_engine(Config.database_url)
 SESSION = sessionmaker(engine)
 
-meta = MetaData(naming_convention={
-  "ix": 'ix_%(column_0_label)s',
-  "uq": "uq_%(table_name)s_%(column_0_name)s",
-  "ck": "ck_%(table_name)s_%(constraint_name)s",
-  "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-  "pk": "pk_%(table_name)s"
-})
+meta = MetaData(
+    naming_convention={
+        "ix": "ix_%(column_0_label)s",
+        "uq": "uq_%(table_name)s_%(column_0_name)s",
+        "ck": "ck_%(table_name)s_%(constraint_name)s",
+        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+        "pk": "pk_%(table_name)s",
+    }
+)
 Base = declarative_base(metadata=meta)
 
-
+# fmt: off
 class Symbol(Base):
     """Model used for different securities i.e. stocks, bonds, ETFs etc..."""
 
-    __tablename__ = 'symbol'
+    __tablename__       = "symbol"
 
-    symbol_id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(200), nullable=False)
-    ticker = Column(String(30), nullable=False)
-    description = Column(Text)
-    sector = Column(String(30))
-    asset_type = Column(String(30))
-    created_date = Column(DateTime, default=datetime.utcnow())
-    last_updated_date = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
-
-    # ! I dont think this covers all the child tables
-    children = relationship("bar_data_daily")
+    symbol_id           = Column(Integer, primary_key=True, autoincrement=True)
+    name                = Column(String(200), nullable=False)
+    ticker              = Column(String(30), nullable=False)
+    description         = Column(Text)
+    sector              = Column(String(30))
+    asset_type          = Column(String(30))
+    created_date        = Column(DateTime, default=datetime.utcnow())
+    last_updated_date   = Column(DateTime, default=datetime.utcnow(), 
+                            onupdate=datetime.utcnow()
+                            )
+    children            = relationship("bar_data_daily")  # ! others?
 
     def __repr__(self):
         return f"<Symbol id={self.symbol_id} name={self.name} ticker={self.ticker}>"
@@ -76,15 +81,16 @@ class Symbol(Base):
 class BarData:
     """Contains security's information at a given time interval.
 
-    For example, each day a stock has an open price, high price, low price, 
+    For example, each day a stock has an open price, high price, low price,
     and close price, in addition to the # of stocks sold during that day.
 
     This class is used as a mixin to organize time series data among different
     tables by frequency.
     """
+
     @declared_attr
     def symbol_id(cls):
-        return Column(Integer, ForeignKey('symbol.symbol_id'), primary_key=True)
+        return Column(Integer, ForeignKey("symbol.symbol_id"), primary_key=True)
 
     @declared_attr
     def __tablename__(cls):
@@ -92,7 +98,7 @@ class BarData:
 
     # I dont think its good to have two primary keys
     timestamp         = Column(DateTime, primary_key=True)
-    
+
     open_price        = Column(Float, nullable=False)
     high_price        = Column(Float, nullable=False)
     low_price         = Column(Float, nullable=False)
@@ -101,12 +107,11 @@ class BarData:
     volume            = Column(Integer, nullable=False)
     dividend_amount   = Column(Float)
     split_coeff       = Column(Float)
-    created_date = Column(DateTime, default=datetime.utcnow())
-    last_updated_date = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow())
-
-
-# * Empty table classes since currently each table is identical
-# * The name of each class determines the table name
+    created_date      = Column(DateTime, default=datetime.utcnow())
+    last_updated_date = Column(DateTime, default=datetime.utcnow(), 
+                            onupdate=datetime.utcnow()
+                        )
+# fmt: on
 
 
 class bar_data_daily(BarData, Base):
