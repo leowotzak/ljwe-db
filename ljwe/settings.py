@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-d-=l0as$%5*oh!=5ndzjhdkf)@1kg$t#eb*04o1f94kbpst!l(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['blooming-journey-16393.herokuapp.com']
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -87,17 +87,13 @@ WSGI_APPLICATION = 'ljwe.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
-    'SecuritiesMaster': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'SecuritiesMaster',
         'USER': 'database',
         'PASSWORD': 'password',
         'HOST': '54.145.231.149',
         'PORT': '5432',
-    }
+    },
 }
 
 
@@ -137,7 +133,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/frontend/public/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'frontend/public'),

@@ -4784,6 +4784,11 @@ fd@~0.0.2:
   resolved "https://registry.yarnpkg.com/fd/-/fd-0.0.3.tgz#b3240de86dbf5a345baae7382a07d4713566ff0c"
   integrity sha512-iAHrIslQb3U68OcMSP0kkNWabp7sSN6d2TBSb2JO3gcLJVDd4owr/hKM4SFJovFOUeeXeItjYgouEDTMWiVAnA==
 
+fetch-multiple@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/fetch-multiple/-/fetch-multiple-1.2.3.tgz#48cf045c1582396da02034be7dfa836bb5dae7b2"
+  integrity sha1-SM8EXBWCOW2gIDS+ffqDa7Xa57I=
+
 figures@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/figures/-/figures-3.2.0.tgz#625c18bd293c604dc4a8ddb2febf0c88341746af"
@@ -5231,6 +5236,13 @@ gatsby-recipes@^1.1.3:
     ws "^7.3.0"
     xstate "^4.9.1"
     yoga-layout-prebuilt "^1.9.6"
+
+gatsby-source-rest-api@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/gatsby-source-rest-api/-/gatsby-source-rest-api-0.2.3.tgz#1bbe2274a7ec686a5f07d0e5eabc84f537967287"
+  integrity sha512-cE3fvgOfJQxW+GvHm/GzwFbmMOdQLjiS52l+vvYn1UHeBvpM6COT+vCamNCfFJYrmTddoDUhUJ3xHjZ9O4Ackw==
+  dependencies:
+    fetch-multiple "^1.2.3"
 
 gatsby-telemetry@^3.1.3:
   version "3.1.3"

@@ -8,8 +8,18 @@ module.exports = {
   /* Your site config here */
   proxy: {
     prefix: "/ljwe",
-    url: "http://localhost:5000"
+    url: "http://localhost:8000"
   },
 
-  plugins: [],
+  plugins: [
+    {
+      resolve: 'gatsby-source-rest-api',
+      options: {
+        endpoints: [
+          'https://blooming-journey-16393.herokuapp.com/ljwe/symbol'
+        ],
+      },
+    },
+  ],
 }
+

@@ -1,9 +1,12 @@
-import React from "react"
-import { useState } from "react"
+import React, { useState, useEffect } from "react"
+import { graphql } from "gatsby"
 import { Table } from "react-bootstrap"
 
 
 const SymbolRow = ({symbol_id, ticker, name, description, sector, asset_type}) => {
+
+  console.log(symbol_id, ticker, name, description, sector, asset_type)
+
   return (
     <tr>
       <td>{symbol_id}</td>
@@ -17,14 +20,9 @@ const SymbolRow = ({symbol_id, ticker, name, description, sector, asset_type}) =
 }
 
 
-export default () => {
+export default (data) => {
 
   const [options, setOptions] = useState({})
-
-  // fetch('http://localhost:5000/ljwe/symbol/?freq=daily&symbol_id=0')
-  // .then(res => res.json())
-  // .then(data => setOptions(data))
-  // .catch((err) => {console.error(err)})
 
   return (
     <Table>
@@ -37,8 +35,11 @@ export default () => {
         </tr>
         </thead>
         <tbody>
-          {Object.entries(options).map(([index, row]) => SymbolRow(row))}
+          {
+            data.map(({node}) => SymbolRow(node))
+          }
         </tbody>
     </Table>
   )
 }
+
