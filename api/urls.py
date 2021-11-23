@@ -25,7 +25,7 @@ class SymbolViewSet(viewsets.ModelViewSet):
     #     y = x.bardatadaily_set.all()
     #     for z in y:
     #         print(dir(z))
-    queryset = Symbol.objects.using('SecuritiesMaster').all()
+    queryset = Symbol.objects.all()
     serializer_class = QuerySerializer
 
     def list(self, request):
