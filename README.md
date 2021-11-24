@@ -1,31 +1,64 @@
 # LJWE Database
 
-`SQLAlchemy` database setup and management scripts for the Master Securities Database. Utilizes `alembic` to track revisions to database schema and `pandas` to extract, transform, & load data. Requests asset price and metadata from [Alpha Vantage](https://www.alphavantage.co/) and automatically inserts into or updates the database.
+![Release](https://img.shields.io/github/v/release/leowotzak/ljwe-db)
+![Repo Size](https://img.shields.io/github/repo-size/leowotzak/ljwe-db)
+![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)
+![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
-This is used as part of a full stack application, and will is currently deployed with `PostgreSQL` on Heroku. The `ljwedb` module is a collection of scripts that perform the initialization and updating functions. Updates are scheduled to be run daily after the end of trading hours.
+__LJWE website__ backend built with `Python` & `Django` and supports users as well as a financial assets `REST` `API`[^1].
 
-## Modules
+The *Securities Master* database comes with a collection of scripts that insert and update new data into the database. They utilize `Django`'s built-in ORM and migration system to track revisions to database schema and `pandas` to extract, transform, & load data.
 
+[^1]: Data sourced from [Alpha Vantage](https://www.alphavantage.co/)
 
-### _**retrieve.py**_
-
----
-
-Namespace of functions that retrieve and format data from alpha vantage
-
-* Manufactures queries, and sends GET requests to alpha vantage. Extracted results are transformed into a format that is recognized and loaded by the database schema.
+## REST API Endpoints
 
 ---
 
-### _**update.py**_
+<!-- cSpell: disable -->
+### Symbols
 
-Namespace of functions that update the Database
+*Stores visitor information and sends an email to myself notifying me of a new message*
 
-* Functions initialize a database session, request each alpha vantage endpoint, and insert/update new data.
+* **URL**
+
+  /symbol
+
+* **Method(s)**
+
+  * `GET`
+
+* **Params**
+  * `symbol_id=[integer]`
+  * `freq=[string]`
+
+* **Success Response:**
+
+  * **Code:** 202 ACCEPTED \
+    **Content:** `{ body : "Message sent!" }`
+
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST \
+    **Content:**
+    `{ firstname : "Firstname Invalid", lastname: "Lastname Invalid", email: "Email Invalid", message: "Message Invalid" }`
+
+* **Sample Call:**
+```bash
+  curl --location --request POST 'http://127.0.0.1:5000/contact' \
+--form 'firstname="Jim"' \
+--form 'lastname="Miller"' \
+--form 'email="Jim.Miller@fakeemail.com"' \
+--form 'message="Hi!"'
+```
+
+<!-- cSpell: enable -->
+
+## Database
 
 ---
 
-### _**models.py**_
+![database_schema](ljwedb.png)
 
 | Symbol Data | Interday Data | Intraday Data |
 |----|----|----|
@@ -35,6 +68,6 @@ Namespace of functions that update the Database
 ||| thirty minute |
 ||| sixty minute |
 
-![database_schema](ljwedb.png)
+**retrieve.py:** Namespace of functions that retrieve and format data from alpha vantage
 
-Learn more: (https://www.leojwotzak.com)
+**update.py:** Namespace of functions that update the Database
