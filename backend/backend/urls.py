@@ -20,4 +20,5 @@ from api import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("ljwe/", include("api.urls")),
 ]
