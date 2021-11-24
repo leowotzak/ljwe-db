@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
+
 import django_heroku
 from pathlib import Path
 
@@ -23,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure--zj^4cu=ra4v@ws2pmh5pyjxb^t(3^$$szu)*!tjd6fh(9zwn-"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -87,7 +89,9 @@ LOGGING = {
         "file": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
-            "filename": "mysite.log",
+            "filename": os.path.join(
+                "/Users/leowotzak/Python/ljwe-db/backend", "APPNAME.log"
+            ),
             "formatter": "verbose",
         },
     },
@@ -97,7 +101,7 @@ LOGGING = {
             "propagate": True,
             "level": "DEBUG",
         },
-        "MYAPP": {
+        "APPNAME": {
             "handlers": ["file"],
             "level": "DEBUG",
         },
