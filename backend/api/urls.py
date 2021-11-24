@@ -21,7 +21,7 @@ class QuerySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SymbolViewSet(viewsets.ModelViewSet):
-    queryset = Symbol.objects.using("SecuritiesMaster")
+    queryset = Symbol.objects
     serializer_class = QuerySerializer
 
     def list(self, request):
