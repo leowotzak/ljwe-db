@@ -6,10 +6,10 @@ the database schema.
 
 
 """
-
 import json
 import re
 import logging
+import importlib
 from datetime import datetime
 from io import StringIO
 from typing import Generator
@@ -17,8 +17,9 @@ from typing import Generator
 import pandas as pd
 import requests
 
+
+from .. import models
 from .config import Config
-from .models import SESSION, Symbol
 
 log = logging.getLogger(__name__)
 
@@ -38,33 +39,6 @@ COL_NAMES = {
     "8. split coefficient": "split_coeff",
 }
 
-SLICES = [
-    "year1month1",
-    "year1month2",
-    "year1month3",
-    "year1month4",
-    "year1month5",
-    "year1month6",
-    "year1month7",
-    "year1month8",
-    "year1month9",
-    "year1month10",
-    "year1month11",
-    "year1month12",
-    "year2month1",
-    "year2month2",
-    "year2month3",
-    "year2month4",
-    "year2month5",
-    "year2month6",
-    "year2month7",
-    "year2month8",
-    "year2month9",
-    "year2month10",
-    "year2month11",
-    "year2month12",
-]
-
 
 def Ticker(symbol: str) -> bool:
     """Type for valid ticker structures
@@ -83,7 +57,7 @@ def bar_data_wrapper(func):
     def wrapper(*args, **kwargs):
         assert Ticker(args[0])
         res: pd.DataFrame = func(*args, **kwargs)
-        return res.rename(columns=COL_NAMES)
+        return res.rename(columns=COL_NAMES).iterrows()
 
     return wrapper
 
@@ -129,44 +103,37 @@ def _generate_query(
     return params
 
 
-def database_symbols(syms: list) -> Generator:
+def database_symbols():
     """Queries database for current symbols"""
-
     # FIXME add types to generator
-    with SESSION() as session:
-        if syms:
-            query = session.query(Symbol).filter(Symbol.ticker in syms).first()
-        else:
-            query = session.query(Symbol).all()
-
-    for bar in query:
-        yield bar.symbol_id, bar.__dict__
+    for bar in models.Symbol.objects.all():
+        yield bar
 
 
-def listed_symbols() -> pd.DataFrame:
-    """Retrieves currently listed symbols from alphavantage"""
-    res = requests.get(Config.base_url, params=_generate_query("LISTING_STATUS"))
-    csv = str(res.content, encoding="utf-8")
-    return pd.read_csv(StringIO(csv), header=0)
+# def listed_symbols() -> pd.DataFrame:
+#     """Retrieves currently listed symbols from alphavantage"""
+#     res = requests.get(Config.base_url, params=_generate_query("LISTING_STATUS"))
+#     csv = str(res.content, encoding="utf-8")
+#     return pd.read_csv(StringIO(csv), header=0)
 
 
 def wiki_sp500() -> pd.DataFrame:
     """Queries S&P 500 companies for simplicity & size constraints from DB"""
-    with SESSION() as session:
-        members = pd.read_html(
-            "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
-        )[0]
-        for idx, bar in members.iterrows():
-            m = Symbol(
-                name=bar["Security"],
-                ticker=bar["Symbol"],
-                sector=bar["GICS Sector"],
-                asset_type="stock",
-            )
-            log.debug("Adding ticker: %s to 'Symbol' table", bar["Symbol"])
-            session.merge(m)
-        else:
-            session.commit()
+    members = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")[
+        0
+    ]
+
+    entries = [
+        models.Symbol(
+            name=bar["Security"],
+            ticker=bar["Symbol"],
+            sector=bar["GICS Sector"],
+            asset_type=["stock"],
+        )
+        for idx, bar in members.iterrows()
+    ]
+    log.debug("Committing entries...")
+    models.Symbol.objects.bulk_create(entries)
 
 
 @bar_data_wrapper
@@ -206,6 +173,7 @@ def monthly_equity_data(symbol: str) -> pd.DataFrame:
     params = _generate_query("TIME_SERIES_MONTHLY", symbol=symbol, datatype=True)
 
     res = requests.get(Config.base_url, params=params)
+    log.debug(res.json())
 
     if res.json().get("Monthly Time Series"):
         k = res.json().get("Monthly Time Series")
