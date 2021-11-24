@@ -5,7 +5,7 @@ import { Table } from "react-bootstrap"
 const SymbolRow = ({symbol_id, ticker, name, description, sector, asset_type}) => {
 
   return (
-    <tr>
+    <tr key={symbol_id}>
       <td>{symbol_id}</td>
       <td>{ticker}</td>
       <td>{name}</td>
@@ -31,7 +31,6 @@ export default ({allSymbolData}) => {
         </thead>
         <tbody>
           {allSymbolData.map(i => SymbolRow(i))}
-
         </tbody>
     </Table>
   )
