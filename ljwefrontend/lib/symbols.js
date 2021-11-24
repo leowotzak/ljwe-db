@@ -1,5 +1,5 @@
 
 export async function getSymbols() {
-    const res = await fetch("http://localhost:8000/ljwe/symbol")
+    const res = await fetch("https://blooming-journey-16393.herokuapp.com/ljwe/symbol")
     return res.json()
 }
