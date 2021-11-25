@@ -21,6 +21,8 @@ return (
           <Link href="/dash">Dashboard</Link>
           </Nav.Link>
         <Nav.Link>
+          <Link href="/login">Login</Link>
+        </Nav.Link>
         <Nav.Link>
           <Link href="/register">Sign up</Link>
         </Nav.Link>

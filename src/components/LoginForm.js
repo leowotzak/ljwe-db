@@ -31,7 +31,6 @@ export default () => {
           name="email"
           onBlur={handleChange}
         ></Form.Control>
-        <br />
         <Form.Text>test message</Form.Text>
       </Form.Group>
 
