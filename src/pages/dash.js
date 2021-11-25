@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Container } from "react-bootstrap";
-import { NavBar, SymbolTable } from "../components";
+import { Row, Col } from "react-bootstrap";
+import { NavBar, SymbolTable, PageLayout } from "../components";
 import { LineChart, Line } from "recharts";
 import Select from "react-select";
 
@@ -40,14 +40,21 @@ export default function Dash({ allSymbolData }) {
   }, []);
 
   return (
-    <Container>
-      <NavBar />
+    <PageLayout>
+      <Row>
+        <Col>
       <LineChart width={400} height={400} data={ph_data}>
         <Line type="monotone" dataKey="uv" stroke="#8884d8" />
       </LineChart>
+      </Col>
+      <Col>
+      <LineChart width={400} height={400} data={ph_data}>
+        <Line type="monotone" dataKey="uv" stroke="#8884d8" />
+      </LineChart>
+      </Col>
+      </Row>
       <Select options={options} isMulti onChange={handleChange} />
-      first dash
       {/* {SymbolTable(allSymbolData)} */}
-    </Container>
+    </PageLayout>
   );
 }
