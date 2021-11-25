@@ -20,6 +20,10 @@ return (
           <Nav.Link>
           <Link href="/dash">Dashboard</Link>
           </Nav.Link>
+        <Nav.Link>
+        <Nav.Link>
+          <Link href="/register">Sign up</Link>
+        </Nav.Link>
       </Nav>
     </Navbar.Collapse>
   </Container>
