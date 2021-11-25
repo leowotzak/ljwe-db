@@ -4,7 +4,7 @@ import {NavBar, Footer} from "../components"
 export default ({children}) => {
 
     return (
-        <Container>
+        <Container align="center">
         <NavBar />
         {children}
         <Footer />

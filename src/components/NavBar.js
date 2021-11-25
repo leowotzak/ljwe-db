@@ -8,7 +8,7 @@ import Link from 'next/link'
 export default () => {
 
 return (
-<Navbar bg="light" expand="lg">
+<Navbar className="mb-4" bg="light" expand="lg">
   <Container>
     <Navbar.Brand href="/">React-Bootstrap</Navbar.Brand>
     <Navbar.Toggle aria-controls="basic-navbar-nav" />

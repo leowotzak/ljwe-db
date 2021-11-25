@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { NavBar, SymbolTable, PageLayout } from "../components";
-import { LineChart, Line } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
 import Select from "react-select";
 
 import { getSymbols } from "../lib/symbols";
@@ -41,9 +41,14 @@ export default function Dash({ allSymbolData }) {
 
   return (
     <PageLayout>
+      <Container>
       <Row>
         <Col>
-      <LineChart width={400} height={400} data={ph_data}>
+      <LineChart width={800} height={400} data={ph_data}>
+        <XAxis />
+        <YAxis />
+        <CartesianGrid strokeDasharray="3 3" />
+
         <Line type="monotone" dataKey="uv" stroke="#8884d8" />
       </LineChart>
       </Col>
@@ -54,7 +59,8 @@ export default function Dash({ allSymbolData }) {
       </Col>
       </Row>
       <Select options={options} isMulti onChange={handleChange} />
-      {/* {SymbolTable(allSymbolData)} */}
+      {SymbolTable(allSymbolData)}
+      </Container>
     </PageLayout>
   );
 }
