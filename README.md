@@ -58,7 +58,7 @@ The *Securities Master* database comes with a collection of scripts that insert 
 
 ---
 
-![database_schema](ljwedb.png)
+![database_schema](https://github.com/leowotzak/ljwe-db/blob/ccf29fb48593bba276bc69d258fe4e8f65ad9391/docs/ljwedb.png)
 
 | Symbol Data | Interday Data | Intraday Data |
 |----|----|----|
