@@ -1,13 +1,14 @@
 # LJWE Database
 
+![Status](https://img.shields.io/website?up_message=online&url=https%3A%2F%2Ffloating-headland-47828.herokuapp.com%2Fljwe%2F)
 ![Release](https://img.shields.io/github/v/release/leowotzak/ljwe-db)
 ![Repo Size](https://img.shields.io/github/repo-size/leowotzak/ljwe-db)
 ![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
-__LJWE website__ backend built with `Python` & `Django` and supports users as well as a financial assets `REST` `API`[^1].
+**LJWE** website backend built with **Python** & **Django** and supports users as well as a financial assets **REST API**[^1].
 
-The *Securities Master* database comes with a collection of scripts that insert and update new data into the database. They utilize `Django`'s built-in ORM and migration system to track revisions to database schema and `pandas` to extract, transform, & load data.
+The _**Securities Master**_ database comes with a collection of scripts that insert and update new data into the database. They utilize **Django**'s built-in ORM and migration system to track revisions to database schema and **pandas** to extract, transform, & load data.
 
 [^1]: Data sourced from [Alpha Vantage](https://www.alphavantage.co/)
 
