@@ -1,9 +1,15 @@
-Front end for LJWEquities deployed on Heroku
+# LJWE Frontend
 
-Built with React and NextJS
+![Status](https://img.shields.io/website?up_color=green&up_message=online&url=https%3A%2F%2Fblooming-journey-16393.herokuapp.com%2F)
+![Repo Size](https://img.shields.io/github/repo-size/leowotzak/ljwe-backend)
+![Pretty](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?)
 
-Features the following pages:
-* index page
-* dashboard page
+Front end for **LJWEquities** built using **React** & **Next.js** to dynamically update content post-build. Currently features the following pages:
 
-Uses `Yarn` as package manager
+1) an index page and,
+
+2) a dashboard page
+
+The website uses **Bootstrap** to create clean, portable layouts and **Recharts** to display beautiful data visualizations.
+
+[^1]: Proxies requests to `localhost:8000` during development
