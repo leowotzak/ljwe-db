@@ -1,6 +1,6 @@
 import React from "react"
 import { useState } from "react"
-import { Form, Button } from "react-bootstrap"
+import { Container, Row, Col, Form, Button } from "react-bootstrap"
 
 export default () => {
   const [user, setUser] = useState({})
@@ -21,6 +21,7 @@ export default () => {
   }
 
   return (
+    <Container align="left" style={{maxWidth:"700px"}}>
     <Form>
       <Form.Group style={{ margin: "5px" }}>
         <Form.Label>Email Address</Form.Label>
@@ -31,7 +32,6 @@ export default () => {
           name="email"
           onBlur={handleChange}
         ></Form.Control>
-        <br />
         <Form.Text>test message</Form.Text>
       </Form.Group>
 
@@ -44,15 +44,17 @@ export default () => {
           name="password"
           onBlur={handleChange}
         ></Form.Control>
-        <br />
       </Form.Group>
 
       <Form.Group style={{ margin: "5px" }}>
         <Form.Check type="checkbox" label="Remember me" />
       </Form.Group>
-      <Button variant="primary" type="submit" onClick={e => handleSubmit(e)}>
+      <Row className="justify-content-center">
+      <Button variant="primary" type="submit" onClick={e => handleSubmit(e)} style={{maxWidth: "200px"}}>
         Submit
       </Button>
+      </Row>
     </Form>
+    </Container>
   )
 }
