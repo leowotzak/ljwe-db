@@ -4,8 +4,6 @@ import { Container, Row, Col } from "react-bootstrap";
 
 // import { getSymbols } from "../lib/blog";
 
-import "holderjs";
-
 // export async function getStaticProps() {
 //   const allBlogPosts = await getSymbols();
 
@@ -18,7 +16,6 @@ export default function Blog() {
   return (
     <PageLayout>
       <Container>
-        <img src="holder.js/800x200" />
         <h1>This is the blog page</h1>
         <h3>This is a short subtitle describing what the content is</h3>
         <hr />
