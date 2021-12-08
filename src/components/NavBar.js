@@ -1,9 +1,4 @@
-import React from "react"
-import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap"
-import Head from 'next/head'
-import Link from 'next/link'
-
-
+import { Container, Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 
 export default () => {
 
@@ -16,20 +11,10 @@ return (
       <Nav className="me-auto">
             <Nav.Link href="/blog">Blog</Nav.Link>
         <Nav.Link>
-          <Link href="/about">About</Link>
-          </Nav.Link>
-          <Nav.Link>
+                <Button variant="primary">Register</Button>
           <Link href="/dash">Dashboard</Link>
           </Nav.Link>
         <Nav.Link>
-          <Link href="/login">Login</Link>
-        </Nav.Link>
-        <Nav.Link>
-          <Link href="/register">Sign up</Link>
-        </Nav.Link>
-      </Nav>
-    </Navbar.Collapse>
-  </Container>
-</Navbar>
+                <Button variant="outline-primary">Login</Button>
 )
 }
