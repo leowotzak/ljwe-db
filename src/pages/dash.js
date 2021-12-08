@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { NavBar, SymbolTable, PageLayout } from "../components";
+import { SymbolTable, PageLayout, FrequencySelector } from "../components";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
 import Select from "react-select";
 
@@ -42,6 +42,14 @@ export default function Dash({ allSymbolData }) {
   return (
     <PageLayout>
       <Container>
+        <Row>
+          <Col>
+          <Select options={options} isMulti onChange={handleChange} />
+          </Col>
+        </Row>
+        <Row>
+          <FrequencySelector />
+          </Row>
       <Row>
         <Col>
       <LineChart width={800} height={400} data={ph_data}>
@@ -58,8 +66,9 @@ export default function Dash({ allSymbolData }) {
       </LineChart>
       </Col>
       </Row>
-      <Select options={options} isMulti onChange={handleChange} />
-      {SymbolTable(allSymbolData)}
+      {SymbolTable(selection)}
+
+      {/* {SymbolTable(allSymbolData)} */}
       </Container>
     </PageLayout>
   );
