@@ -3,6 +3,8 @@ import { Container, Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import Head from "next/head";
 import Link from "next/link";
 
+import gats from "../../public/gatsby.png";
+
 export default () => {
   return (
     <Navbar className="mb-4" bg="light" expand="lg">
