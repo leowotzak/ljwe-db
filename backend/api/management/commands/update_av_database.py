@@ -17,6 +17,8 @@ class Command(BaseCommand):
     help = "displays current time"
 
     def handle(self, *args, **kwargs):
+
+        # TODO Improve argument handling (argparse)
         for symbol in retrieve.database_symbols():
             t = symbol.ticker
             update.interday_prices(symbol.symbol_id, t)

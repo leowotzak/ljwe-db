@@ -67,6 +67,7 @@ def _process_bar(symbol_id: int, timestamp, model, new_bar):
 
 
 def interday_prices(symbol_id: int, symbol: str):
+    """Iterates through interday database models"""
     for model, retrieve_func in INTERDAY_MODELS:
         (
             _process_bar(symbol_id, timestamp, model, new_bar)
@@ -75,6 +76,7 @@ def interday_prices(symbol_id: int, symbol: str):
 
 
 def intraday_prices(symbol_id: int, symbol: str):
+    """Iterates through intraday time intervals"""
     for interval, model in INTRADAY_MODELS:
         (
             _process_bar(symbol_id, timestamp, model, new_bar)
@@ -85,6 +87,7 @@ def intraday_prices(symbol_id: int, symbol: str):
 
 
 def intraday_extended_prices(symbol_id: int, symbol: str):
+    """Iterates through intraday time intervals and historical slices"""
     for slice_ in SLICES:
         for interval, model in INTRADAY_MODELS:
             (
