@@ -17,7 +17,32 @@ class QuerySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Symbol
-        fields = ["symbol_id", "ticker", "name", "description", "sector", "asset_type"]
+        fields = [
+            "symbol_id",
+            "ticker",
+            "name",
+            "description",
+            "sector",
+            "asset_type",
+            # "bardatadaily_set",
+        ]
+
+
+class TestSerializer(serializers.HyperlinkedModelSerializer):
+
+    bardatadaily_set = BarSerializer(many=True)
+
+    class Meta:
+        model = Symbol
+        fields = [
+            "symbol_id",
+            "ticker",
+            "name",
+            "description",
+            "sector",
+            "asset_type",
+            "bardatadaily_set",
+        ]
 
 
 class SymbolViewSet(viewsets.ModelViewSet):
@@ -25,10 +50,18 @@ class SymbolViewSet(viewsets.ModelViewSet):
     serializer_class = QuerySerializer
 
     def list(self, request):
-        # x = request.query_params
-        # y = QuerySerializer(self.queryset.all())
-        x = QuerySerializer(self.queryset.all(), many=True)
-        return Response(x.data)
+        if not request.query_params:
+            x = QuerySerializer(self.queryset.all(), many=True)
+            return Response(x.data)
+
+        try:
+            id_ = request.query_params["symbol_id"]
+        except KeyError:
+            raise NotImplementedError
+        else:
+            print(request.query_params)
+            y = TestSerializer(self.queryset.filter(symbol_id=id_), many=True)
+            return Response(y.data)
 
 
 router = routers.DefaultRouter()
