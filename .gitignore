@@ -1,6 +1,13 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+__pycache__
+.mypy_cache
+.pytest_cache
+.env
+db.sqlite3
+
 # dependencies
+venv
 /node_modules
 /.pnp
 .pnp.js
