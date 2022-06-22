@@ -11,7 +11,7 @@ gunicorn==20.1.0
 idna==3.3
 lxml==4.6.5
 mypy-extensions==0.4.3
-numpy==1.21.4
+numpy==1.22.0
 pandas==1.3.4
 pathspec==0.9.0
 platformdirs==2.4.0
